@@ -4,7 +4,9 @@ def launch():
     print("W/L/D:Pokemon1,Pokemon2,Pokemon3")
     userInput = input("> ")
 
-    parseData(userInput)
+    writeToFile(userInput)
+
+    #parseData(userInput)
 
 
 def parseData(userInput):
@@ -24,5 +26,10 @@ def parseData(userInput):
 
     pokemons.append(pokemon)
     print(pokemons)
+
+
+def writeToFile(input):
+    file = open("webclient/data/s4/data.txt", "a")
+    file.write(input + "\n")
 
 launch()
