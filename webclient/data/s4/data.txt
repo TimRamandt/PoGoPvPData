@@ -1,1 +1,3 @@
 W:Azumaril, Beedrill, Haunter
+L:wormadam, fortress, azumaril
+L:wormadame, fortress, azumaril
