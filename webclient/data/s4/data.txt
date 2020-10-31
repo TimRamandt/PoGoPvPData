@@ -1,6 +1,8 @@
+- GL 2020-10-30
 W:Azumaril, Beedrill, Haunter
 L:wormadam, fortress, azumaril
 L:wormadame, fortress, azumaril
 D: Azumaril, scolipede, herracross
 W:hello,bye,ok
 L:ok,bye,hello
+- GL 2020-10-31
