@@ -11,13 +11,15 @@ function parseData(data) {
     var lines = data.split("\n")
 
     for (lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-        if (lines[lineIndex] === "") {
+        console.log(lines[lineIndex])
+        if (lines[lineIndex] === "" || lines[lineIndex].startsWith("- ")) {
             continue;
         }
 
         var split = lines[lineIndex].split(":");
 
         var outcome = split[0];
+        console.log(split[1])
         visualizeData(outcome, pokemonsToArray(split[1]))
     }
 }
@@ -50,13 +52,19 @@ function pokemonsToArray(pokemons) {
     
     var charArray = Array.from(pokemons)
     for (charIndex = 0; charIndex < charArray.length; charIndex++) {
-        if (charArray[charIndex] == ",") {
+        if (charArray[charIndex] === ",") {
            pokemonsArray.push(pokemon)
            pokemon = "";
            continue;
-       }
+        }
 
-        if (isAlpha(charArray[charIndex])) {
+        if (charArray[charIndex] === "?" && !pokemon.includes("?")) {
+           pokemon = "?";
+           continue;
+        }
+
+
+        if (isAlphaOrUnderscore(charArray[charIndex]) && !pokemon.includes("?")) {
             pokemon += charArray[charIndex];
         }
     }
@@ -65,6 +73,9 @@ function pokemonsToArray(pokemons) {
     return pokemonsArray
 }
 
-function isAlpha(char) {
+function isAlphaOrUnderscore(char) {
+    if (char === "_") {
+        return true
+    }
     return /^[A-Z]$/i.test(char);;
 }

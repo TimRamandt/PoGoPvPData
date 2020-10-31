@@ -23,6 +23,12 @@ def launch():
 
 def determineRemainingBattles():
     content = open("webclient/data/s4/data.txt", "r").read().splitlines()
+
+    if len(content) <= 0:
+        print("A fresh season! Good luck trainer!W")
+        writeToFile("- GL " + datetime.date.today().strftime("%Y-%m-%d"))
+        return 0
+
     lineIndex = len(content) - 1
     amountOfBattles = 0
     while lineIndex >= 0:
