@@ -9,3 +9,12 @@
 .D {
     background-color: yellow;
 }
+
+.invisibility {
+    visibility: hidden;
+}
+
+.hiden {
+    display: none;
+}
+
