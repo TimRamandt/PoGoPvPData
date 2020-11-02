@@ -1,8 +1,21 @@
 - GL 2020-10-30
-W:Azumaril, Beedrill, Haunter
-L:wormadam, fortress, azumaril
-L:wormadame, fortress, azumaril
-D: Azumaril, scolipede, herracross
-W:hello,bye,ok
-L:ok,bye,hello
-- GL 2020-10-31
+L:azumaril,toxicroak,beedrill
+L:froslas, beedrill, scizor
+W:driftblim, mandibuzz, beedrill
+L:driftblim, umbreon, beedrill
+W:crustle, al_marowak, azumaril
+W:azumaril, toxicroak, clefable
+L:al_marowak, azumaril, ?
+L:driftblim, beedrill, azumaril
+L:umbreon, obstagoon, scizor
+W:crustle, victreebell, umbreon
+L:scizor, wigglytuff, ?
+L:victreebell, al_marowak, ?
+D:crustle, victreebell, al_ninetales
+W:sharpedo, victreebell, granbull
+W:granbull, cleffable, wigglytuff
+W:wigglytuff, al_marowak, umbreon
+W:galvulenta, al_marowak, beedrill
+L:toxicroak, azumaril, crustle
+W:granbull, venusaur, obstagoon
+W:froslass, beedrill, obstagoon

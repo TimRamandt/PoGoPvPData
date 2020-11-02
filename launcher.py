@@ -5,7 +5,7 @@ def launch():
     print("Pokemon Go PvP Data Collector.")
 
     amountOfbattles = determineRemainingBattles()
-    if amountOfbattles >= 30:
+    if amountOfbattles >= 25:
         errorMessage("Unable to input more battles, max amount (6) of sets is reached for today") 
         return
 
@@ -13,7 +13,7 @@ def launch():
     print("W/L/D:Pokemon1,Pokemon2,Pokemon3")
 
     #battle registration
-    while amountOfbattles < 30:
+    while amountOfbattles < 25:
         userInput = input("> ")
         writeToFile(userInput)
         amountOfbattles += 1
