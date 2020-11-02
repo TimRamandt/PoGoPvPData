@@ -17,3 +17,8 @@
 .hiden {
     display: none;
 }
+
+.teamDisplayTable {
+    margin-left: 10px;
+    width: 350px;
+}
