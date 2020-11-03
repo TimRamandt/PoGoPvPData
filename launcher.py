@@ -1,10 +1,19 @@
 import datetime
 from colorama import Fore 
 
+
 def launch():
+    dataPath = "webclient/data/s4/data.txt"
+
+    testApp = True 
+    if testApp:
+        print("testing mode")
+        dataPath = "webclient/data/s4/testData.txt"
+
+    print(dataPath)
     print("Pokemon Go PvP Data Collector.")
 
-    amountOfbattles = determineRemainingBattles()
+    amountOfbattles = determineRemainingBattles(dataPath)
     if amountOfbattles >= 25:
         errorMessage("Unable to input more battles, max amount (6) of sets is reached for today") 
         return
@@ -18,21 +27,21 @@ def launch():
         print(userInput)
 
         if (userInput == "reindex"):
-            reIndex()
+            reIndex(dataPath)
             continue
 
-        writeToFile(userInput)
+        writeToFile(userInput, dataPath)
         amountOfbattles += 1
 
     errorMessage("Unable to input more battles, max amount (6) of sets is reached for today") 
     #parseData(userInput)
 
-def determineRemainingBattles():
-    content = open("webclient/data/s4/testData.txt", "r").read().splitlines()
+def determineRemainingBattles(dataPath):
+    content = open(dataPath, "r").read().splitlines()
 
     if len(content) <= 0:
         print("A fresh season! Good luck trainer!")
-        writeToFile("- GL " + datetime.date.today().strftime("%Y-%m-%d"))
+        writeToFile("- GL " + datetime.date.today().strftime("%Y-%m-%d"), dataPath)
         return 0
 
     lineIndex = len(content) - 1
@@ -41,7 +50,7 @@ def determineRemainingBattles():
         if content[lineIndex].startswith('- '):
             if isInPast(content[lineIndex].split(' ')[2]):
                 print("Welcome back trainer, good luck on today's battles.")
-                writeToFile("- GL " + datetime.date.today().strftime("%Y-%m-%d"))
+                writeToFile("- GL " + datetime.date.today().strftime("%Y-%m-%d") + "\n", dataPath)
                 return 0
             
             print("You have do " + str(amountOfBattles) + " battles so far.")
@@ -76,8 +85,8 @@ def parseData(userInput):
     pokemons.append(pokemon)
     print(pokemons)
 
-def writeToFile(input):
-    file = open("webclient/data/s4/data.txt", "a")
+def writeToFile(input, dataPath):
+    file = open(dataPath, "a")
     file.write(input + "\n")
 
 
@@ -87,11 +96,11 @@ def errorMessage(errorMessage):
     #reset the console back to the regular color
     print(Fore.RESET)
 
-def reIndex():
+def reIndex(dataPath):
     print("reindexing...")
     indexFile = open("webclient/data/s4/sIndex.txt", "w")
 
-    content = open("webclient/data/s4/testData.txt", "r").read().splitlines()
+    content = open(dataPath, "r").read().splitlines()
 
     if len(content) <= 0:
         print("done!")
