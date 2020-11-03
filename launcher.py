@@ -15,6 +15,12 @@ def launch():
     #battle registration
     while amountOfbattles < 25:
         userInput = input("> ")
+        print(userInput)
+
+        if (userInput == "reindex"):
+            reIndex()
+            continue
+
         writeToFile(userInput)
         amountOfbattles += 1
 
@@ -22,10 +28,10 @@ def launch():
     #parseData(userInput)
 
 def determineRemainingBattles():
-    content = open("webclient/data/s4/data.txt", "r").read().splitlines()
+    content = open("webclient/data/s4/testData.txt", "r").read().splitlines()
 
     if len(content) <= 0:
-        print("A fresh season! Good luck trainer!W")
+        print("A fresh season! Good luck trainer!")
         writeToFile("- GL " + datetime.date.today().strftime("%Y-%m-%d"))
         return 0
 
@@ -81,5 +87,26 @@ def errorMessage(errorMessage):
     #reset the console back to the regular color
     print(Fore.RESET)
 
+def reIndex():
+    print("reindexing...")
+    indexFile = open("webclient/data/s4/sIndex.txt", "w")
+
+    content = open("webclient/data/s4/testData.txt", "r").read().splitlines()
+
+    if len(content) <= 0:
+        print("done!")
+        return 
+
+    lineIndex = 0
+    indexContent = ""
+    while lineIndex < len(content):
+        
+        if content[lineIndex].startswith('- '):
+            indexContent = indexContent + str(lineIndex) + "\n" 
+
+        lineIndex = lineIndex + 1
+
+    indexFile.write(indexContent.rstrip("\n"))
+    print("done!")
 
 launch()

@@ -19,3 +19,4 @@ W:galvulenta, al_marowak, beedrill
 L:toxicroak, azumaril, crustle
 W:granbull, venusaur, obstagoon
 W:froslass, beedrill, obstagoon
+- GL 2020-11-01
