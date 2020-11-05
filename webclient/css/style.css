@@ -1,13 +1,13 @@
 .L {
-    background-color: red;
+    background-color: #aa0000;
 }
 
 .W {
-    background-color: green;
+    background-color: #047e00;
 }
 
 .D {
-    background-color: yellow;
+    background-color: #e2dc00;
 }
 
 .invisibility {
@@ -21,4 +21,12 @@
 .teamDisplayTable {
     margin-left: 10px;
     width: 350px;
+}
+
+.textBox {
+    width: 30px;
+}
+
+label{
+    margin-right:5px;
 }

@@ -41,7 +41,7 @@ def determineRemainingBattles(dataPath):
 
     if len(content) <= 0:
         print("A fresh season! Good luck trainer!")
-        writeToFile("- GL " + datetime.date.today().strftime("%Y-%m-%d"), dataPath)
+        writeToFile("- GL " + datetime.date.today().strftime("%Y-%m-%d") + "\n", dataPath)
         return 0
 
     lineIndex = len(content) - 1

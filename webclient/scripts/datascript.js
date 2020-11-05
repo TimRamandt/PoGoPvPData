@@ -1,23 +1,75 @@
 readData()
 
-async function readData() {
-    const response = await fetch("http://localhost:8088/data/s4/testData.txt")
-    const data = await response.text()
-    parseData(data)
+async function switchView(e) {
+    if (e.keyCode === 13) {
+        e.preventDefault()
+        resetUI()
+
+        var currentView = document.getElementById("currentView").value;
+
+        const dataResponse = await fetch("http://localhost:8088/data/s4/testData.txt")
+        const data = (await dataResponse.text()).split("\n")
+
+        const indexFileResponse = await fetch("http://localhost:8088/data/s4/sIndex.txt")
+        const indexFile = (await indexFileResponse.text()).split("\n")
+        
+        indexFileLine = indexFile.length - currentView;
+
+        //to prevent out of bound exceptions
+        if (indexFileLine < 0) {
+            indexFileLine = 0;
+        } 
+        console.log(indexFile[indexFileLine])
+        parseData(data, indexFile[indexFileLine])
+    }
 }
 
-function parseData(data) {
-    console.log(data)
-    var lines = data.split("\n")
 
+function resetUI() {
+    for(setNr = 1; setNr < 6; setNr++) {
+        
+        replaceClassAttributes("text-center", "noSetMsg" + setNr)
+        replaceClassAttributes("teamDisplayTable invisible", "set"+setNr)
+
+        setNode = document.getElementById("dataSet" + setNr);
+        while (setNode.firstChild) {
+            setNode.removeChild(setNode.lastChild);
+        }
+    }
+}
+
+async function readData() {
+    const dataResponse = await fetch("http://localhost:8088/data/s4/testData.txt")
+    const data = (await dataResponse.text()).split("\n")
+    
+    const indexFileResponse = await fetch("http://localhost:8088/data/s4/sIndex.txt")
+    const indexFile = (await indexFileResponse.text()).split("\n")
+    fillAmountOfDays(indexFile)
+
+    parseData(data, indexFile[indexFile.length-1])
+}
+
+function fillAmountOfDays(indexFile) {
+    var lblAmountOfDays = document.getElementById("amountOfDays");
+    var textNode = document.createTextNode("/" + indexFile.length);
+    lblAmountOfDays.replaceWith(textNode)
+}
+
+function parseData(lines, indexStart) {
+    console.log(lines)
     var sets = new Array()
     var set = new Array()
 
     var battles = 0;
-    for (lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+    indexStart++; //javascript doesn't allow my for loop to set lineIndex = indexStart+1 *sigh*
+    for (lineIndex = indexStart; lineIndex < lines.length; lineIndex++) {
         console.log(lines[lineIndex])
 
-        if (lines[lineIndex] === "" || lines[lineIndex].startsWith("- ")) {
+        if(lines[lineIndex].startsWith("- ")) {
+            break;
+        }
+
+        if (lines[lineIndex] === "") {
             continue;
         }
 
@@ -74,10 +126,7 @@ function showSetUI(setNr) {
     var setdiv = document.getElementById("set" + setNr)
     setdiv.classList.remove("invisible")
 
-    var noSetMsg = document.getElementById("noSetMsg" + setNr)
-    var clazz = document.createAttribute("class");
-    clazz.value = "hiden";
-    noSetMsg.setAttributeNode(clazz)
+    replaceClassAttributes("hiden", "noSetMsg" + setNr)
 }
 
 function pokemonsToArray(pokemons) {
@@ -112,4 +161,11 @@ function isAlphaOrUnderscore(char) {
         return true
     }
     return /^[A-Z]$/i.test(char);;
+}
+
+function replaceClassAttributes(value, parentId) {
+    var parent = document.getElementById(parentId)
+    var invisibleClass = document.createAttribute("class")
+    invisibleClass.value = value 
+    parent.setAttributeNode(invisibleClass)
 }
