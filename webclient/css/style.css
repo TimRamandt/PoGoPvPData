@@ -27,6 +27,21 @@
     width: 30px;
 }
 
+.sub-title {
+    margin-top: -2%;
+}
+
 label{
     margin-right:5px;
+}
+
+#stats {
+    position: relative;
+    left: -15%;
+}
+
+
+#ratioBar {
+      width: 100%;
+      background-color: grey;
 }
