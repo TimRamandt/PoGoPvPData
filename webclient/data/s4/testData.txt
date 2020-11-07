@@ -30,3 +30,9 @@ L: crustle, al_marowak, cleffable
 W: wigglytuff, azumaril, umbreon
 L: swalot, azumaril, toxicroak
 W: al_muk, galvuntal, crustle
+- GL 2020-11-02
+L: haunter, al_marowak, clefable
+W: Golbat, al_muk, scrafty
+L: azumaril, al_marowak, beedrill
+W: driftblim, azuamril, umbreon
+W: azumaril, al_marowak, cleffable

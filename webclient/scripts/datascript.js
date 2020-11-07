@@ -1,11 +1,11 @@
-readData()
+on_load()
 
 async function switchView(e) {
     if (e.keyCode === 13) {
         e.preventDefault()
         resetUI()
 
-        var currentView = document.getElementById("currentView").value;
+        var currentView = parseInt(document.getElementById("currentView").value);
 
         const dataResponse = await fetch("http://localhost:8088/data/s4/testData.txt")
         const data = (await dataResponse.text()).split("\n")
@@ -19,8 +19,9 @@ async function switchView(e) {
         if (indexFileLine < 0) {
             indexFileLine = 0;
         } 
-        console.log(indexFile[indexFileLine])
-        parseData(data, indexFile[indexFileLine])
+
+        parseData(data, parseInt(indexFile[indexFileLine]))
+        fillDate(data, parseInt(indexFile[indexFileLine]))
     }
 }
 
@@ -38,15 +39,19 @@ function resetUI() {
     }
 }
 
-async function readData() {
+async function on_load() {
     const dataResponse = await fetch("http://localhost:8088/data/s4/testData.txt")
     const data = (await dataResponse.text()).split("\n")
     
     const indexFileResponse = await fetch("http://localhost:8088/data/s4/sIndex.txt")
     const indexFile = (await indexFileResponse.text()).split("\n")
+    console.log(indexFile)
     fillAmountOfDays(indexFile)
 
-    parseData(data, indexFile[indexFile.length-1])
+    recentIndex = indexFile[indexFile.length-1]
+
+    fillDate(data, parseInt(recentIndex))
+    parseData(data, parseInt(recentIndex))
 }
 
 function fillAmountOfDays(indexFile) {
@@ -61,8 +66,7 @@ function parseData(lines, indexStart) {
     var set = new Array()
 
     var battles = 0;
-    indexStart++; //javascript doesn't allow my for loop to set lineIndex = indexStart+1 *sigh*
-    for (lineIndex = indexStart; lineIndex < lines.length; lineIndex++) {
+    for (lineIndex = parseInt(indexStart)+1; lineIndex < lines.length; lineIndex++) {
         console.log(lines[lineIndex])
 
         if(lines[lineIndex].startsWith("- ")) {
@@ -168,4 +172,9 @@ function replaceClassAttributes(value, parentId) {
     var invisibleClass = document.createAttribute("class")
     invisibleClass.value = value 
     parent.setAttributeNode(invisibleClass)
+}
+
+function fillDate(data, index) {
+    var date = data[index].split(" ")[2]
+    document.getElementById("date").innerText = date 
 }
