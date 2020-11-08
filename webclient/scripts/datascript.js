@@ -1,8 +1,17 @@
+import { createStatistics, pokemonsToArray } from './statistics.js'
+
 on_load()
 
+var input = document.getElementById("currentView");
+input.addEventListener("keypress", function(event) {
+    if (event.keyCode === 13) {
+        event.preventDefault();
+        console.log(event)
+        switchView(event)
+    }
+});
+
 async function switchView(e) {
-    if (e.keyCode === 13) {
-        e.preventDefault()
         resetUI()
 
         var currentView = parseInt(document.getElementById("currentView").value);
@@ -13,26 +22,28 @@ async function switchView(e) {
         const indexFileResponse = await fetch("http://localhost:8088/data/s4/sIndex.txt")
         const indexFile = (await indexFileResponse.text()).split("\n")
         
-        indexFileLine = indexFile.length - currentView;
+        var indexFileLine = (indexFile.length) - currentView;
 
         //to prevent out of bound exceptions
         if (indexFileLine < 0) {
             indexFileLine = 0;
         } 
 
-        parseData(data, parseInt(indexFile[indexFileLine]))
+        parseData(data, indexFile[indexFileLine])
         fillDate(data, parseInt(indexFile[indexFileLine]))
-    }
+
+        var statistics = createStatistics(data, indexFile[indexFileLine], true)
+        showMostCommonLead(statistics)
 }
 
 
 function resetUI() {
-    for(setNr = 1; setNr < 6; setNr++) {
+    for(var setNr = 1; setNr < 6; setNr++) {
         
         replaceClassAttributes("text-center", "noSetMsg" + setNr)
         replaceClassAttributes("teamDisplayTable invisible", "set"+setNr)
 
-        setNode = document.getElementById("dataSet" + setNr);
+        var setNode = document.getElementById("dataSet" + setNr);
         while (setNode.firstChild) {
             setNode.removeChild(setNode.lastChild);
         }
@@ -48,10 +59,12 @@ async function on_load() {
     console.log(indexFile)
     fillAmountOfDays(indexFile)
 
-    recentIndex = indexFile[indexFile.length-1]
+    var recentIndex = indexFile[indexFile.length-1]
+    var statistics = createStatistics(data, recentIndex, true)
 
     fillDate(data, parseInt(recentIndex))
     parseData(data, parseInt(recentIndex))
+    showMostCommonLead(statistics)
 }
 
 function fillAmountOfDays(indexFile) {
@@ -66,7 +79,7 @@ function parseData(lines, indexStart) {
     var set = new Array()
 
     var battles = 0;
-    for (lineIndex = parseInt(indexStart)+1; lineIndex < lines.length; lineIndex++) {
+    for (var lineIndex = parseInt(indexStart)+1; lineIndex < lines.length; lineIndex++) {
         console.log(lines[lineIndex])
 
         if(lines[lineIndex].startsWith("- ")) {
@@ -93,11 +106,11 @@ function parseData(lines, indexStart) {
     console.log(sets)
 
     //displaying the data we parsed
-    for(setIndex = 0; setIndex < sets.length; setIndex++) {
+    for(var setIndex = 0; setIndex < sets.length; setIndex++) {
         console.log(sets[setIndex])
         //setIndex+1 because sets are 1 based (silly humans!)
         showSetUI(setIndex+1);
-        for(battleIndex = 0; battleIndex < sets[setIndex].length; battleIndex++) {
+        for(var battleIndex = 0; battleIndex < sets[setIndex].length; battleIndex++) {
             console.log(sets[setIndex][battleIndex])
             visualizeData(sets[setIndex][battleIndex].outcome, sets[setIndex][battleIndex].pokemons, setIndex+1)
         }
@@ -113,7 +126,7 @@ function visualizeData(outcome, pokemons, setNr) {
     row.setAttributeNode(clazz)
 
     console.log(pokemons)
-    for (pokemonIndex = 0; pokemonIndex < pokemons.length; pokemonIndex++) {
+    for (var pokemonIndex = 0; pokemonIndex < pokemons.length; pokemonIndex++) {
         var tabledata = document.createElement("td");
         var textNode = document.createTextNode(pokemons[pokemonIndex]);
         tabledata.append(textNode)
@@ -133,40 +146,6 @@ function showSetUI(setNr) {
     replaceClassAttributes("hiden", "noSetMsg" + setNr)
 }
 
-function pokemonsToArray(pokemons) {
-    var pokemonsArray = new Array();
-    var pokemon = ""; 
-    
-    var charArray = Array.from(pokemons)
-    for (charIndex = 0; charIndex < charArray.length; charIndex++) {
-        if (charArray[charIndex] === ",") {
-           pokemonsArray.push(pokemon)
-           pokemon = "";
-           continue;
-        }
-
-        if (charArray[charIndex] === "?" && !pokemon.includes("?")) {
-           pokemon = "?";
-           continue;
-        }
-
-
-        if (isAlphaOrUnderscore(charArray[charIndex]) && !pokemon.includes("?")) {
-            pokemon += charArray[charIndex];
-        }
-    }
-
-    pokemonsArray.push(pokemon)
-    return pokemonsArray
-}
-
-function isAlphaOrUnderscore(char) {
-    if (char === "_") {
-        return true
-    }
-    return /^[A-Z]$/i.test(char);;
-}
-
 function replaceClassAttributes(value, parentId) {
     var parent = document.getElementById(parentId)
     var invisibleClass = document.createAttribute("class")
@@ -175,6 +154,19 @@ function replaceClassAttributes(value, parentId) {
 }
 
 function fillDate(data, index) {
-    var date = data[index].split(" ")[2]
+    var date = data[parseInt(index)].split(" ")[2]
     document.getElementById("date").innerText = date 
+}
+
+
+function showMostCommonLead(statistics) {
+    var leads = statistics.leads
+    var lead = leads[0]
+    for(var i = 1; i < statistics.leads.length; i++) {
+        if (leads[i].encountered > lead.encountered) {
+            lead = leads[i]
+        }
+    }
+
+    document.getElementById("lead").innerText = "most common lead: " + lead.lead + " (" + lead.encountered + ")" 
 }
