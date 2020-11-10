@@ -39,7 +39,6 @@ async function switchView(e) {
 
 function resetUI() {
     for(var setNr = 1; setNr < 6; setNr++) {
-        
         replaceClassAttributes("text-center", "noSetMsg" + setNr)
         replaceClassAttributes("teamDisplayTable invisible", "set"+setNr)
 
@@ -135,7 +134,6 @@ function visualizeData(outcome, pokemons, setNr) {
     }
 
     table.append(row);
-    console.log("appended!")
 }
 
 

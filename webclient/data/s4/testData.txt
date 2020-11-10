@@ -33,6 +33,6 @@ W: al_muk, galvuntal, crustle
 - GL 2020-11-02
 W: azumaril, beedrill, al_marowak 
 L: azumaril, al_marowak, beedrill
-W: Golbat, al_muk, scrafty
+W: golbat, al_muk, scrafty
 L: azumaril, al_marowak, clefable
 W: driftblim, azuamril, umbreon

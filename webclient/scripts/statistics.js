@@ -11,9 +11,16 @@ function createStatistics(data, startIndex, daily) {
             break;
         }
 
+        if(data[i].startsWith("- ")) {
+            //for now do nothing, since season 5 is only great league
+            continue;
+        }
+
         if(data[i] === "") {
             continue;
         }
+
+        console.log(data[i])
 
         var pokemons = pokemonsToArray(data[i].split(":")[1])
         getLeadStats(leadArray, pokemons[0])

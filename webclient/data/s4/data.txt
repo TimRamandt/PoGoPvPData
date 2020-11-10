@@ -21,7 +21,7 @@ W:granbull, venusaur, obstagoon
 W:froslass, beedrill, obstagoon
 - GL 2020-11-01
 L: haunter, al_marowak, clefable
-W: Golbat, al_muk, scrafty
+W: golbat, al_muk, scrafty
 L: azumaril, al_marowak, beedrill
 W: driftblim, azuamril, umbreon
 W: azumaril, al_marowak, cleffable
