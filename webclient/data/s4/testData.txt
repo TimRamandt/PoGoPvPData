@@ -20,19 +20,19 @@ L:toxicroak, azumaril, crustle
 W:granbull, venusaur, obstagoon
 W:froslass, beedrill, obstagoon
 - GL 2020-11-01
-L: haunter, al_marowak, clefable
-W: Golbat, al_muk, scrafty
+L: galvulenta, al_marowak, clefable
+W: al_marowak, al_muk, al_ninetales 
 L: azumaril, al_marowak, beedrill
-W: driftblim, azuamril, umbreon
-W: azumaril, al_marowak, cleffable
-L: toxicroak, azumaril, galventula
-L: crustle, al_marowak, cleffable
-W: wigglytuff, azumaril, umbreon
-L: swalot, azumaril, toxicroak
+L: driftblim, haunter, dusclops 
+W: azumaril, galventula, toxicroak 
+W: toxicroak, azumaril, galventula
+W: crustle, al_marowak, cleffable
+L: wigglytuff, scolipede, umbreon
+L: swalot, clefable, toxicroak
 W: al_muk, galvuntal, crustle
 - GL 2020-11-02
+W: azumaril, beedrill, al_marowak 
+L: azumaril, al_marowak, beedrill
 W: Golbat, al_muk, scrafty
 L: azumaril, al_marowak, clefable
-L: azumaril, al_marowak, beedrill
 W: driftblim, azuamril, umbreon
-W: azumaril, beedrill, al_marowak 

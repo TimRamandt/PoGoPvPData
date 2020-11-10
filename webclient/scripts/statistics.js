@@ -1,5 +1,6 @@
 function createStatistics(data, startIndex, daily) {
     var leadArray = new Array();
+    var teams = new Array();
     if (daily === true) {
         //shifting the index to the next line 
         //because the first line is - <league> <date>
@@ -10,27 +11,69 @@ function createStatistics(data, startIndex, daily) {
             break;
         }
 
+        if(data[i] === "") {
+            continue;
+        }
+
         var pokemons = pokemonsToArray(data[i].split(":")[1])
         getLeadStats(leadArray, pokemons[0])
+        getUniqueTeams(teams, pokemons)
     }
-    return {leads: leadArray}
+    return {leads: leadArray, teams: teams}
 }
 
-function getLeadStats(array, pokemon) {
+function getLeadStats(leads, pokemon) {
     //TO DO: optimize this search algo. Linear search will do for now
-    if(array.length === 0) {
-        array.push({lead:pokemon, encountered:1})
-        return;
+    if(leads.length === 0) {
+        leads.push({lead:pokemon, encountered:1})
+        return leads;
     }
 
-    for (var i = 0; i < array.length; i++) { 
-        if(array[i].lead === pokemon) {
-            array[i].encountered++;
-            return;
+    for (var i = 0; i < leads.length; i++) { 
+        if(leads[i].lead === pokemon) {
+            leads[i].encountered++;
+            return leads;
         }
     }
 
-    array.push({lead:pokemon, encountered:1})
+    leads.push({lead:pokemon, encountered:1})
+}
+
+function getUniqueTeams(teams, team) {
+    //TO DO: optimize this search algo. Linear search will do for now
+    if(teams.length === 0) {
+        teams.push({lead:team[0], backEnd: [team[1],team[2]], encountered:1})
+        return;
+    }
+
+    //for example:
+    //UNIQUE: togekiss, swampert, metagross
+    //UNIQUE: swampert, togekiss, metagross
+    //NOT UNIQUE: togekiss, metagross, swampert
+    console.log(team)
+    for (var i = 0; i < teams.length; i++) { 
+        if(teams[i].lead !== team[0]) {
+            teams.push({lead:team[0], backEnd: [team[1],team[2]], encountered:1})
+            return teams;
+        } 
+
+        if(isUniqueBackEnd(team, teams[i].backEnd)) {
+            teams.push({lead:team[0], backEnd: [team[1],team[2]], encountered:1})
+            return teams;
+        } 
+        teams[i].encountered++;
+    }
+
+    return teams;
+}
+
+function isUniqueBackEnd(team, backEnd) {
+    for(var i = 1; i < 3; i++) {
+        if (team[i] !== backEnd[0] && team[i] !== backEnd[1]) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function pokemonsToArray(pokemons) {

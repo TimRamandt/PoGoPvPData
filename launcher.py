@@ -3,9 +3,9 @@ from colorama import Fore
 
 
 def launch():
-    dataPath = "webclient/data/s4/data.txt"
+    dataPath = "webclient/data/s5/data.txt"
 
-    testApp = True 
+    testApp = False 
     if testApp:
         print("testing mode")
         dataPath = "webclient/data/s4/testData.txt"
@@ -98,7 +98,7 @@ def errorMessage(errorMessage):
 
 def reIndex(dataPath):
     print("reindexing...")
-    indexFile = open("webclient/data/s4/sIndex.txt", "w")
+    indexFile = open("webclient/data/s5/sIndex.txt", "w")
 
     content = open(dataPath, "r").read().splitlines()
 

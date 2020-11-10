@@ -33,7 +33,7 @@ async function switchView(e) {
         fillDate(data, parseInt(indexFile[indexFileLine]))
 
         var statistics = createStatistics(data, indexFile[indexFileLine], true)
-        showMostCommonLead(statistics)
+        showStatistics(statistics)
 }
 
 
@@ -62,9 +62,9 @@ async function on_load() {
     var recentIndex = indexFile[indexFile.length-1]
     var statistics = createStatistics(data, recentIndex, true)
 
+    showStatistics(statistics)
     fillDate(data, parseInt(recentIndex))
     parseData(data, parseInt(recentIndex))
-    showMostCommonLead(statistics)
 }
 
 function fillAmountOfDays(indexFile) {
@@ -159,14 +159,37 @@ function fillDate(data, index) {
 }
 
 
-function showMostCommonLead(statistics) {
-    var leads = statistics.leads
+function showStatistics(statistics) {
+    console.log(statistics)
+    showMostCommonLead(statistics.leads)
+    showMostCommonTeam(statistics.teams)
+    showUniqueTeamCount(statistics.teams.length)
+}
+
+function showMostCommonLead(leads) {
     var lead = leads[0]
-    for(var i = 1; i < statistics.leads.length; i++) {
+    for(var i = 1; i < leads.length; i++) {
         if (leads[i].encountered > lead.encountered) {
             lead = leads[i]
         }
     }
 
     document.getElementById("lead").innerText = "most common lead: " + lead.lead + " (" + lead.encountered + ")" 
+}
+
+
+function showMostCommonTeam(teams) {
+    var team = teams[0]
+    for(var i = 1; i < teams.length; i++) {
+        if (teams[i].encountered >= team.encountered) {
+            team = teams[i]
+        }
+    }
+    var teamText = team.lead + ", " + team.backEnd[0] + ", " + team.backEnd[1] + " (" + team.encountered + ")";
+
+    document.getElementById("common_team").innerText = "most common team: " + teamText
+}
+
+function showUniqueTeamCount(amount) {
+    document.getElementById("unique_teams").innerText = "unique teams: " + amount 
 }
