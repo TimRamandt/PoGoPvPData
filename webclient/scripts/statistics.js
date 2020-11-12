@@ -1,3 +1,5 @@
+export { createStatistics, pokemonsToArray }
+
 function createStatistics(data, startIndex, daily) {
     var leadArray = new Array();
     var teams = new Array();
@@ -23,7 +25,7 @@ function createStatistics(data, startIndex, daily) {
         console.log(data[i])
 
         var pokemons = pokemonsToArray(data[i].split(":")[1])
-        getLeadStats(leadArray, pokemons[0])
+        leadArray = getLeadStats(leadArray, pokemons[0])
         getUniqueTeams(teams, pokemons)
     }
     return {leads: leadArray, teams: teams}
@@ -39,11 +41,15 @@ function getLeadStats(leads, pokemon) {
     for (var i = 0; i < leads.length; i++) { 
         if(leads[i].lead === pokemon) {
             leads[i].encountered++;
+            if (i > 0) {
+                return reOrder(leads, i)
+            }
             return leads;
         }
     }
 
     leads.push({lead:pokemon, encountered:1})
+    return leads;
 }
 
 function getUniqueTeams(teams, team) {
@@ -117,4 +123,45 @@ function isAlphaOrUnderscore(char) {
     return /^[A-Z]$/i.test(char);;
 }
 
-export { createStatistics, pokemonsToArray }
+function reOrder(array, indexOfElement) {
+    var element = array[indexOfElement]
+
+    var newElementIndex = getIndexOfFirstElementWithHigherValue(array, (indexOfElement-1), element)+1;
+
+    //create the ordered array
+    var sortedArray = new Array();
+    for(var j = 0; j < array.length; j++) {
+        if (j === newElementIndex) {
+            sortedArray.push(element)
+            sortedArray.push(array[j]);
+            continue
+        }
+
+        if (j !== indexOfElement) {
+            sortedArray.push(array[j]);
+            continue;
+        }
+
+    }
+    return sortedArray
+}
+
+function getIndexOfFirstElementWithHigherValue(array, startPoint, element) {
+    //comparing the previous element
+    var index = startPoint;
+
+    while(true) {
+        if(index < 0) {
+            stop = true;
+            break;
+        }
+
+        if (element.encountered < array[index].encountered) {
+            break;
+        }
+
+        index--;
+    }
+    
+    return index;
+}

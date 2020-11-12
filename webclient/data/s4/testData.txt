@@ -1,4 +1,4 @@
-- GL 2020-10-30
+- GL 2020-10-31
 L:azumaril,toxicroak,beedrill
 L:froslas, beedrill, scizor
 W:driftblim, mandibuzz, beedrill

@@ -6,7 +6,6 @@ var input = document.getElementById("currentView");
 input.addEventListener("keypress", function(event) {
     if (event.keyCode === 13) {
         event.preventDefault();
-        console.log(event)
         switchView(event)
     }
 });

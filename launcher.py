@@ -4,11 +4,13 @@ from colorama import Fore
 
 def launch():
     dataPath = "webclient/data/s5/data.txt"
+    indexPath = "webclient/data/s5/sIndex.txt"
 
-    testApp = False 
+    testApp = True 
     if testApp:
         print("testing mode")
         dataPath = "webclient/data/s4/testData.txt"
+        indexPath = "webclient/data/s4/sIndex.txt"
 
     print(dataPath)
     print("Pokemon Go PvP Data Collector.")
@@ -27,7 +29,7 @@ def launch():
         print(userInput)
 
         if (userInput == "reindex"):
-            reIndex(dataPath)
+            reIndex(dataPath, indexPath)
             continue
 
         writeToFile(userInput, dataPath)
@@ -96,9 +98,9 @@ def errorMessage(errorMessage):
     #reset the console back to the regular color
     print(Fore.RESET)
 
-def reIndex(dataPath):
+def reIndex(dataPath, indexPath):
     print("reindexing...")
-    indexFile = open("webclient/data/s5/sIndex.txt", "w")
+    indexFile = open(indexPath, "w")
 
     content = open(dataPath, "r").read().splitlines()
 
