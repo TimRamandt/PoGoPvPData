@@ -1,9 +1,9 @@
-import { createStatistics, pokemonsToArray } from './statistics.js'
+import { createStatistics } from './statistics.js'
 
 on_load()
 
 async function on_load() {
-    const dataResponse = await fetch("http://localhost:8088/data/s4/testData.txt")
+    const dataResponse = await fetch("http://localhost:8088/data/s5/data.txt")
     const data = (await dataResponse.text()).split("\n")
 
     //for now 0, because season 5 is only great league

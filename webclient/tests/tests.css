@@ -1,0 +1,11 @@
+.testPassed {
+    color: green;
+}
+
+.testFailed {
+    color:#b30000;
+}
+
+.testOverview {
+    background-color: gainsboro;
+}

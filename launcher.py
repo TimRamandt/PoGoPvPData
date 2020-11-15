@@ -6,7 +6,7 @@ def launch():
     dataPath = "webclient/data/s5/data.txt"
     indexPath = "webclient/data/s5/sIndex.txt"
 
-    testApp = True 
+    testApp = False 
     if testApp:
         print("testing mode")
         dataPath = "webclient/data/s4/testData.txt"

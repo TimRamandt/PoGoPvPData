@@ -25,8 +25,9 @@ function createStatistics(data, startIndex, daily) {
         console.log(data[i])
 
         var pokemons = pokemonsToArray(data[i].split(":")[1])
+
         leadArray = getLeadStats(leadArray, pokemons[0])
-        getUniqueTeams(teams, pokemons)
+        teams = getUniqueTeams(teams, pokemons)
     }
     return {leads: leadArray, teams: teams}
 }
@@ -53,31 +54,42 @@ function getLeadStats(leads, pokemon) {
 }
 
 function getUniqueTeams(teams, team) {
+    if (checkIfInvalidTeam(team)) {
+        return teams;
+    }
+
     //TO DO: optimize this search algo. Linear search will do for now
     if(teams.length === 0) {
         teams.push({lead:team[0], backEnd: [team[1],team[2]], encountered:1})
-        return;
+        return teams;
     }
 
     //for example:
     //UNIQUE: togekiss, swampert, metagross
     //UNIQUE: swampert, togekiss, metagross
     //NOT UNIQUE: togekiss, metagross, swampert
-    console.log(team)
     for (var i = 0; i < teams.length; i++) { 
-        if(teams[i].lead !== team[0]) {
-            teams.push({lead:team[0], backEnd: [team[1],team[2]], encountered:1})
-            return teams;
-        } 
-
-        if(isUniqueBackEnd(team, teams[i].backEnd)) {
-            teams.push({lead:team[0], backEnd: [team[1],team[2]], encountered:1})
-            return teams;
-        } 
-        teams[i].encountered++;
+        //check if the team exists
+        if(teams[i].lead === team[0] && !isUniqueBackEnd(team, teams[i].backEnd)) {
+            teams[i].encountered++;
+            return reOrder(teams, i)
+        }        
     }
 
+    //team doesn't exist, add it to the array
+    teams.push({lead:team[0], backEnd: [team[1],team[2]], encountered:1})
+
     return teams;
+}
+
+function checkIfInvalidTeam(team) {
+    for(var i = 0; i < team.length; i++) {
+        if (team[i] === "?") {
+            return true;
+        }
+    }    
+
+    return false;
 }
 
 function isUniqueBackEnd(team, backEnd) {
@@ -133,8 +145,6 @@ function reOrder(array, indexOfElement) {
     for(var j = 0; j < array.length; j++) {
         if (j === newElementIndex) {
             sortedArray.push(element)
-            sortedArray.push(array[j]);
-            continue
         }
 
         if (j !== indexOfElement) {
@@ -152,7 +162,6 @@ function getIndexOfFirstElementWithHigherValue(array, startPoint, element) {
 
     while(true) {
         if(index < 0) {
-            stop = true;
             break;
         }
 

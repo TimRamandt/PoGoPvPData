@@ -15,10 +15,10 @@ async function switchView(e) {
 
         var currentView = parseInt(document.getElementById("currentView").value);
 
-        const dataResponse = await fetch("http://localhost:8088/data/s4/testData.txt")
+        const dataResponse = await fetch("http://localhost:8088/data/s5/data.txt")
         const data = (await dataResponse.text()).split("\n")
 
-        const indexFileResponse = await fetch("http://localhost:8088/data/s4/sIndex.txt")
+        const indexFileResponse = await fetch("http://localhost:8088/data/s5/sIndex.txt")
         const indexFile = (await indexFileResponse.text()).split("\n")
         
         var indexFileLine = (indexFile.length) - currentView;
@@ -49,10 +49,10 @@ function resetUI() {
 }
 
 async function on_load() {
-    const dataResponse = await fetch("http://localhost:8088/data/s4/testData.txt")
+    const dataResponse = await fetch("http://localhost:8088/data/s5/data.txt")
     const data = (await dataResponse.text()).split("\n")
     
-    const indexFileResponse = await fetch("http://localhost:8088/data/s4/sIndex.txt")
+    const indexFileResponse = await fetch("http://localhost:8088/data/s5/sIndex.txt")
     const indexFile = (await indexFileResponse.text()).split("\n")
     console.log(indexFile)
     fillAmountOfDays(indexFile)
