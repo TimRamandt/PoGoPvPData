@@ -1,2 +1,3 @@
 mockups/
-webclient/data
+webclient/data/
+__pycache__/

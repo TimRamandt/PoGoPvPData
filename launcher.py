@@ -1,5 +1,7 @@
 import datetime
+import sys
 from colorama import Fore 
+from leagues import selectLeague
 
 
 def launch():
@@ -12,10 +14,10 @@ def launch():
         dataPath = "webclient/data/s4/testData.txt"
         indexPath = "webclient/data/s4/sIndex.txt"
 
-    print(dataPath)
     print("Pokemon Go PvP Data Collector.")
-
-    amountOfbattles = determineRemainingBattles(dataPath)
+    
+    league = selectLeague()
+    amountOfbattles = determineRemainingBattles(dataPath, indexPath, league)
     if amountOfbattles >= 25:
         errorMessage("Unable to input more battles, max amount (6) of sets is reached for today") 
         return
@@ -29,21 +31,23 @@ def launch():
         print(userInput)
 
         if (userInput == "reindex"):
+            print("reindexing...")
             reIndex(dataPath, indexPath)
             continue
 
         writeToFile(userInput, dataPath)
         amountOfbattles += 1
 
-    errorMessage("Unable to input more battles, max amount (6) of sets is reached for today") 
+    errorMessage("Unable to input more battles, max amount (5) of sets is reached for today") 
     #parseData(userInput)
 
-def determineRemainingBattles(dataPath):
+def determineRemainingBattles(dataPath, indexPath, league):
     content = open(dataPath, "r").read().splitlines()
 
     if len(content) <= 0:
         print("A fresh season! Good luck trainer!")
-        writeToFile("- GL " + datetime.date.today().strftime("%Y-%m-%d") + "\n", dataPath)
+        writeToFile("- "+ league + " "  + datetime.date.today().strftime("%Y-%m-%d") + "\n", dataPath)
+        reIndex(dataPath, indexPath)
         return 0
 
     lineIndex = len(content) - 1
@@ -52,7 +56,8 @@ def determineRemainingBattles(dataPath):
         if content[lineIndex].startswith('- '):
             if isInPast(content[lineIndex].split(' ')[2]):
                 print("Welcome back trainer, good luck on today's battles.")
-                writeToFile("- GL " + datetime.date.today().strftime("%Y-%m-%d") + "\n", dataPath)
+                writeToFile("- " + league + " " + datetime.date.today().strftime("%Y-%m-%d") + "\n", dataPath)
+                reIndex(dataPath, indexPath)
                 return 0
             
             print("You have do " + str(amountOfBattles) + " battles so far.")
@@ -99,7 +104,6 @@ def errorMessage(errorMessage):
     print(Fore.RESET)
 
 def reIndex(dataPath, indexPath):
-    print("reindexing...")
     indexFile = open(indexPath, "w")
 
     content = open(dataPath, "r").read().splitlines()
@@ -119,5 +123,6 @@ def reIndex(dataPath, indexPath):
 
     indexFile.write(indexContent.rstrip("\n"))
     print("done!")
+
 
 launch()
