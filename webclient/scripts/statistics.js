@@ -132,7 +132,7 @@ function isAlphaOrUnderscore(char) {
     if (char === "_") {
         return true
     }
-    return /^[A-Z]$/i.test(char);;
+    return /^[A-Z]$/i.test(char)
 }
 
 function reOrder(array, indexOfElement) {

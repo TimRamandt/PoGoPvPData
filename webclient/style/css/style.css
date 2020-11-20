@@ -45,3 +45,13 @@ label{
       width: 100%;
       background-color: grey;
 }
+
+.highlight {
+    background-color: #beedeb;
+    display: inline-block;
+    opacity: 1 !important;
+}
+
+.highlight, .leagueOption:hover {
+    opacity: .5;
+}
