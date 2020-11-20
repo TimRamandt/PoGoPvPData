@@ -1,8 +1,10 @@
-export { createStatistics, pokemonsToArray }
+export { createStatistics, pokemonsToArray, getLeague }
 
-function createStatistics(data, startIndex, daily) {
+function createStatistics(data, startIndex, daily, league) {
     var leadArray = new Array();
     var teams = new Array();
+
+    var requestedLeague = true;
     if (daily === true) {
         //shifting the index to the next line 
         //because the first line is - <league> <date>
@@ -14,11 +16,20 @@ function createStatistics(data, startIndex, daily) {
         }
 
         if(data[i].startsWith("- ")) {
-            //for now do nothing, since season 5 is only great league
+            if (league === undefined) {
+                continue;
+            }
+
+            if (getLeague(data[i]) !== league) {
+                requestedLeague = false
+                continue;
+            }
+
+            requestedLeague = true;
             continue;
         }
 
-        if(data[i] === "") {
+        if(data[i] === "" || !requestedLeague) {
             continue;
         }
 
@@ -173,4 +184,16 @@ function getIndexOfFirstElementWithHigherValue(array, startPoint, element) {
     }
     
     return index;
+}
+
+function getLeague(line) {
+    var charArrayLine = Array.from(line) 
+    var league = ""; 
+    for(var j = 0; j < charArrayLine.length; j++) {
+        console.log()
+        if (charArrayLine[j] !== "" && isAlphaOrUnderscore(charArrayLine[j])){
+            league = league + charArrayLine[j]
+        }
+    }
+    return league
 }

@@ -31,7 +31,7 @@ async function switchView(e) {
         parseData(data, indexFile[indexFileLine])
         fillDate(data, parseInt(indexFile[indexFileLine]))
 
-        var statistics = createStatistics(data, indexFile[indexFileLine], true)
+        var statistics = createStatistics(data, indexFile[indexFileLine], true, undefined)
         showStatistics(statistics)
 }
 
@@ -58,7 +58,7 @@ async function on_load() {
     fillAmountOfDays(indexFile)
 
     var recentIndex = indexFile[indexFile.length-1]
-    var statistics = createStatistics(data, recentIndex, true)
+    var statistics = createStatistics(data, recentIndex, true, undefined)
 
     showStatistics(statistics)
     fillDate(data, parseInt(recentIndex))
