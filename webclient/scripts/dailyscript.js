@@ -1,6 +1,8 @@
 import { createStatistics, pokemonsToArray } from './statistics.js'
+import { drawWinRatio } from './ratioBar.js'
 
 on_load()
+drawWinRatio()
 
 var input = document.getElementById("currentView");
 input.addEventListener("keypress", function(event) {
