@@ -3,6 +3,7 @@ export { createStatistics, pokemonsToArray, getLeague }
 function createStatistics(data, startIndex, daily, league) {
     var leadArray = new Array();
     var teams = new Array();
+    var outcomes = {wins: 0, loses:0, draws: 0}
 
     var requestedLeague = true;
     if (daily === true) {
@@ -33,14 +34,24 @@ function createStatistics(data, startIndex, daily, league) {
             continue;
         }
 
-        console.log(data[i])
+        var seperatedData = data[i].split(":");
+        if (seperatedData[0] === "W") {
+            outcomes.wins++;
+        }
 
-        var pokemons = pokemonsToArray(data[i].split(":")[1])
+        if (seperatedData[0] === "L") {
+            outcomes.loses++;
+        }
 
+        if (seperatedData[0] === "D") {
+            outcomes.draws++;
+        }
+
+        var pokemons = pokemonsToArray(seperatedData[1])
         leadArray = getLeadStats(leadArray, pokemons[0])
         teams = getUniqueTeams(teams, pokemons)
     }
-    return {leads: leadArray, teams: teams}
+    return {leads: leadArray, teams: teams, outcomes: outcomes}
 }
 
 function getLeadStats(leads, pokemon) {

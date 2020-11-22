@@ -2,7 +2,6 @@ import { createStatistics, pokemonsToArray } from './statistics.js'
 import { drawWinRatio } from './ratioBar.js'
 
 on_load()
-drawWinRatio()
 
 var input = document.getElementById("currentView");
 input.addEventListener("keypress", function(event) {
@@ -34,6 +33,7 @@ async function switchView(e) {
         fillDate(data, parseInt(indexFile[indexFileLine]))
 
         var statistics = createStatistics(data, indexFile[indexFileLine], true, undefined)
+        drawWinRatio(statistics.outcomes)
         showStatistics(statistics)
 }
 
@@ -65,6 +65,7 @@ async function on_load() {
     showStatistics(statistics)
     fillDate(data, parseInt(recentIndex))
     parseData(data, parseInt(recentIndex))
+    drawWinRatio(statistics.outcomes)
 }
 
 function fillAmountOfDays(indexFile) {

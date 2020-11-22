@@ -1,4 +1,5 @@
 import { createStatistics, getLeague } from './statistics.js'
+import { drawWinRatio } from './ratioBar.js'
 
 var leagueOptions = new Array();
 var data = new Array();
@@ -64,14 +65,18 @@ function loadLeagueOptionsUI() {
             var altAttribute = sourceElement.attributes.alt;
 
             if (sourceElement.attributes.class.value !== "highlight") {
+                var ratioBar = document.getElementById("ratioBar")
+                ratioBar.removeAttribute("class")
                 var selectedOptions = document.getElementsByClassName("highlight"); 
                 for(var i = 0; i < selectedOptions.length; i++) {
                     selectedOptions[i].setAttribute('class', 'leagueOption')
                 }
                 var selectedLeague = leagueOptions.find(lo => lo.league === altAttribute.value)
                 var statistics = createStatistics(data, selectedLeague.startIndex, false, selectedLeague.league)
+                console.log(statistics)
                 populateTeams(statistics.teams)
                 populateLeads(statistics.leads)
+                drawWinRatio(statistics.outcomes)
                 sourceElement.setAttribute('class', 'highlight')
             }
         })

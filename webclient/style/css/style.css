@@ -49,27 +49,3 @@ label{
 .highlight, .leagueOption:hover {
     opacity: .5;
 }
-
-
-#myProgress {
-  width: 50%;
-  background-color: grey;
-}
-
-#wins {
-  width: 60%;
-  height: 30px;
-  background-color: green;
-}
-
-#loses {
-  width: 100%;
-  height: 30px;
-  background-color: red;
-}
-
-#draws {
-  width: 5%;
-  height: 30px;
-  background-color: yellow;
-}
