@@ -2,6 +2,8 @@ import datetime
 import sys
 from colorama import Fore 
 from leagues import selectLeague
+from teamsetCmd import executeTeamSet
+from battlerecordCmd import registerBattleRecord
 
 
 def launch():
@@ -15,11 +17,16 @@ def launch():
         indexPath = "webclient/data/s4/sIndex.txt"
 
     print("Pokemon Go PvP Data Collector.")
-    
+    print("v0.2-alpha")
+
+    #loading the commands from the other python files
+    commands = [executeTeamSet, registerBattleRecord]
+
     league = selectLeague()
+
     amountOfbattles = determineRemainingBattles(dataPath, indexPath, league)
     if amountOfbattles >= 25:
-        errorMessage("Unable to input more battles, max amount (6) of sets is reached for today") 
+        errorMessage("Unable to input more battles, max amount (5) of sets is reached for today") 
         return
 
     print("Syntax")
@@ -28,18 +35,31 @@ def launch():
     #battle registration
     while amountOfbattles < 25:
         userInput = input("> ")
-        print(userInput)
 
         if (userInput == "reindex"):
             print("reindexing...")
             reIndex(dataPath, indexPath)
             continue
 
-        writeToFile(userInput, dataPath)
-        amountOfbattles += 1
+        for command in commands:
+            result = command(userInput)
+            if (type(result) is tuple):
+                writeToFile(result[0], dataPath)
+                if result[1] != "" and result[2] != "":
+                    selectMessage(result[1], result[2])
+                break
+
+            if result.startswith("ERR:"):
+               errorMessage(result)
+               break 
+
+            if result == "OTHER_COMMAND":
+                continue
+
+            amountOfbattles += 1
+            break
 
     errorMessage("Unable to input more battles, max amount (5) of sets is reached for today") 
-    #parseData(userInput)
 
 def determineRemainingBattles(dataPath, indexPath, league):
     content = open(dataPath, "r").read().splitlines()
@@ -73,35 +93,16 @@ def isInPast(strDate):
     dateArray = strDate.split('-')
     return datetime.datetime(now.year, now.month, now.day) > datetime.datetime(int(dateArray[0]), int(dateArray[1]), int(dateArray[2]))
 
-
-def parseData(userInput):
-    #outcome = userInput.split(":")[0]
-    #print(outcome)
-
-    #need to figure out dataclass I'll be using an array now
-    pokemons = []
-    pokemon = ""
-    for c in list(userInput.split(":")[1]):
-        if c == ",":
-            pokemons.append(pokemon)
-            pokemon = ""
-            continue
-        if c.isalpha():
-            pokemon += c
-
-    pokemons.append(pokemon)
-    print(pokemons)
-
 def writeToFile(input, dataPath):
     file = open(dataPath, "a")
     file.write(input + "\n")
 
 
 def errorMessage(errorMessage):
-    print(Fore.RED + errorMessage)
+    print(Fore.RED + errorMessage + Fore.RESET)
 
-    #reset the console back to the regular color
-    print(Fore.RESET)
+def selectMessage(pretext, value):
+    print(pretext + Fore.CYAN + value + Fore.RESET)
 
 def reIndex(dataPath, indexPath):
     indexFile = open(indexPath, "w")
