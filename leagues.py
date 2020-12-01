@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 import re
-from colorama import Fore 
 
 def getLeagueOptions():
     schedule = open("./leagues/league.schedule", "r").read().splitlines()
@@ -14,30 +13,41 @@ def getLeagueOptions():
 
     return "error with league.schedule"
 
-def selectLeague():
-    options = getLeagueOptions()
-    if "," in options:
-       #this is probably for season 6
-       return ""
+def selectLeague(infoMethodCall, errorMethodCall):
+    options = getLeagueOptions().split(',')
+    if len(options) <= 1:
+        infoMethodCall("current league is set on ", options[0])
+        return getLeagueAbbrivation(options[0]) 
+    
+    print("Which league are you participating in? The following leagues are open:")
+    infoMethodCall("",getLeagueOptions())
+    print("please type in the correct abbreviation.")
 
-    option = ""
+    while True:
+        selectedLeague = input("> ").upper()
+        for option in options:
+            if selectedLeague == getLeagueAbbrivation(option):
+              infoMethodCall("current league is set on ", option)
+              return selectedLeague
+
+        errorMethodCall("ERR: " + selectedLeague + " is not a correct abbreviation. Try again please.") 
+
+    return "??" 
+
+
+def getLeagueAbbrivation(option):
+    leagueAbbrivation = ""
     startWriting = False 
-    for i in list(options):
+    for i in list(option):
         if i == '(':
             startWriting = True
             continue
 
         if i == ')':
-            selectLeagueMessage(options) 
-            return option
+            return leagueAbbrivation.upper()
 
         if startWriting == True:
-            option = option + i
-
-    
-    return "unable to retrieve league information :/"
-
-
+            leagueAbbrivation = leagueAbbrivation + i
 
 def checkScheduleEntry(line):
     #example: Little Cup (LC) : 09-11-2020->16-11-2020 : GTM-8
@@ -60,9 +70,3 @@ def getGameTime(timeZone):
 def parseTime(date):
     dateArray = date.split("-")
     return datetime(int(dateArray[2]),int(dateArray[1]),int(dateArray[0]),13,0)
-
-def selectLeagueMessage(league):
-    print("league set to: " + Fore.CYAN + league)
-
-    #reset the console back to the regular color
-    print(Fore.RESET)

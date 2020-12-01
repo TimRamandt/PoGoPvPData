@@ -22,7 +22,7 @@ def launch():
     #loading the commands from the other python files
     commands = [executeTeamSet, registerBattleRecord]
 
-    league = selectLeague()
+    league = selectLeague(infoMessage, errorMessage)
 
     amountOfbattles = determineRemainingBattles(dataPath, indexPath, league)
     if amountOfbattles >= 25:
@@ -46,7 +46,7 @@ def launch():
             if (type(result) is tuple):
                 writeToFile(result[0], dataPath)
                 if result[1] != "" and result[2] != "":
-                    selectMessage(result[1], result[2])
+                    infoMessage(result[1], result[2])
                 break
 
             if result.startswith("ERR:"):
@@ -75,7 +75,6 @@ def determineRemainingBattles(dataPath, indexPath, league):
     while lineIndex >= 0:
         if content[lineIndex].startswith('- '):
             if isInPast(content[lineIndex].split(' ')[2]):
-                print("Welcome back trainer, good luck on today's battles.")
                 writeToFile("- " + league + " " + datetime.date.today().strftime("%Y-%m-%d") + "\n", dataPath)
                 reIndex(dataPath, indexPath)
                 return 0
@@ -101,7 +100,7 @@ def writeToFile(input, dataPath):
 def errorMessage(errorMessage):
     print(Fore.RED + errorMessage + Fore.RESET)
 
-def selectMessage(pretext, value):
+def infoMessage(pretext, value):
     print(pretext + Fore.CYAN + value + Fore.RESET)
 
 def reIndex(dataPath, indexPath):
