@@ -75,6 +75,7 @@ def determineRemainingBattles(dataPath, league):
         if content[lineIndex].startswith('- '):
             if isInPast(content[lineIndex].split(' ')[2]):
                 writeToFile("- " + league + " " + datetime.date.today().strftime("%Y-%m-%d"), dataPath)
+                executeReIndex("reindex")
                 return 0
             
             print("You have done " + str(amountOfBattles) + " battles so far.")
