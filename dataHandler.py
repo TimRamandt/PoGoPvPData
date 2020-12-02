@@ -7,6 +7,7 @@ def getSeasonFilePath():
     if os.path.isdir(basePath) != True:
         os.mkdir(basePath)
         f = open(dataPath, "w")
-        f.write("x\nx\nx\n")
+        #startIndexes
+        f.write("3\nx\nx\n")
 
     return dataPath 

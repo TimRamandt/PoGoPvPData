@@ -12,13 +12,6 @@ VERSION = "v0.2-alpha"
 
 def launch():
     dataPath = getSeasonFilePath()
-    indexPath = "webclient/data/s5/sIndex.txt"
-
-    testApp = False 
-    if testApp:
-        print("testing mode")
-        dataPath = "webclient/data/s4/testData.txt"
-        indexPath = "webclient/data/s4/sIndex.txt"
 
     print(TITLE)
     print(VERSION)
@@ -28,7 +21,7 @@ def launch():
 
     league = selectLeague(infoMessage, errorMessage)
 
-    amountOfbattles = determineRemainingBattles(dataPath, indexPath, league)
+    amountOfbattles = determineRemainingBattles(dataPath, league)
     if amountOfbattles >= 25:
         errorMessage("Unable to input more battles, max amount (5) of sets is reached for today") 
         return
@@ -64,7 +57,7 @@ def launch():
 
     errorMessage("Unable to input more battles, max amount (5) of sets is reached for today") 
 
-def determineRemainingBattles(dataPath, indexPath, league):
+def determineRemainingBattles(dataPath, league):
     content = open(dataPath, "r").read().splitlines()
 
     if len(content) <= 3:
@@ -82,7 +75,6 @@ def determineRemainingBattles(dataPath, indexPath, league):
         if content[lineIndex].startswith('- '):
             if isInPast(content[lineIndex].split(' ')[2]):
                 writeToFile("- " + league + " " + datetime.date.today().strftime("%Y-%m-%d"), dataPath)
-                reIndex(dataPath, indexPath)
                 return 0
             
             print("You have done " + str(amountOfBattles) + " battles so far.")
@@ -110,27 +102,5 @@ def errorMessage(errorMessage):
 
 def infoMessage(pretext, value):
     print(pretext + Fore.CYAN + value + Fore.RESET)
-
-def reIndex(dataPath, indexPath):
-    indexFile = open(indexPath, "w")
-
-    content = open(dataPath, "r").read().splitlines()
-
-    if len(content) <= 0:
-        print("done!")
-        return 
-
-    lineIndex = 0
-    indexContent = ""
-    while lineIndex < len(content):
-        
-        if content[lineIndex].startswith('- '):
-            indexContent = indexContent + str(lineIndex) + "\n" 
-
-        lineIndex = lineIndex + 1
-
-    indexFile.write(indexContent.rstrip("\n"))
-    print("done!")
-
 
 launch()

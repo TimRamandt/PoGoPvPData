@@ -2,18 +2,18 @@ import { createStatistics, getLeague } from './statistics.js'
 import { drawWinRatio } from './ratioBar.js'
 
 var leagueOptions = new Array();
-var data = new Array();
+var dataObject = "";
 on_load()
 
 async function on_load() {
-    const dataResponse = await fetch("http://localhost:8088/data/s5/data.txt")
-    data = (await dataResponse.text()).split("\n")
-    console.log(data)
+    const dataResponse = await fetch("http://localhost:8088/data/s6/data.txt")
+    const dataRaw = (await dataResponse.text()).split("\n")
+    console.log(dataRaw)
 
-    const indexFileResponse = await fetch("http://localhost:8088/data/s5/sIndex.txt")
-    const indexFile = (await indexFileResponse.text()).split("\n")
-
-    loadLeagueOptions(indexFile, data)
+    var indexesObject = {startOfDay:dataRaw[0].split(";")}
+    dataObject = {indexes:indexesObject, data:dataRaw}
+    console.log(dataObject)
+    loadLeagueOptions(dataObject)
     loadLeagueOptionsUI()
 }
 
@@ -43,11 +43,11 @@ function createNode(text, element) {
     return node
 }
 
-function loadLeagueOptions(indexFile, data) {
-    for (var i = 0; i < indexFile.length; i++) { 
-        var league = getLeague(data[parseInt(indexFile[i])])
+function loadLeagueOptions(dataObject) {
+    for (var i = 0; i < dataObject.indexes.startOfDay.length; i++) { 
+        var league = getLeague(dataObject.data[parseInt(dataObject.indexes.startOfDay[i])])
         if (leagueOptions.find(lo => lo.league === league) === undefined) {
-            leagueOptions.push({league: league, startIndex: parseInt(indexFile[i])})
+            leagueOptions.push({league: league, startIndex: parseInt(dataObject.indexes.startOfDay[i])})
         }
     }
 }
@@ -72,7 +72,8 @@ function loadLeagueOptionsUI() {
                     selectedOptions[i].setAttribute('class', 'leagueOption')
                 }
                 var selectedLeague = leagueOptions.find(lo => lo.league === altAttribute.value)
-                var statistics = createStatistics(data, selectedLeague.startIndex, false, selectedLeague.league)
+                console.log(dataObject)
+                var statistics = createStatistics(dataObject.data, selectedLeague.startIndex, false, selectedLeague.league)
                 console.log(statistics)
                 populateTeams(statistics.teams)
                 populateLeads(statistics.leads)

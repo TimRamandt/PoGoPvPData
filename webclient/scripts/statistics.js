@@ -4,7 +4,6 @@ function createStatistics(data, startIndex, daily, league) {
     var leadArray = new Array();
     var teams = new Array();
     var outcomes = {wins: 0, loses:0, draws: 0}
-
     var requestedLeague = true;
     if (daily === true) {
         //shifting the index to the next line 
@@ -30,7 +29,7 @@ function createStatistics(data, startIndex, daily, league) {
             continue;
         }
 
-        if(data[i] === "" || !requestedLeague) {
+        if(!requestedLeague) {
             continue;
         }
 
@@ -47,9 +46,11 @@ function createStatistics(data, startIndex, daily, league) {
             outcomes.draws++;
         }
 
-        var pokemons = pokemonsToArray(seperatedData[1])
-        leadArray = getLeadStats(leadArray, pokemons[0])
-        teams = getUniqueTeams(teams, pokemons)
+        if (seperatedData[1] !== undefined) {
+            var pokemons = pokemonsToArray(seperatedData[1])
+            leadArray = getLeadStats(leadArray, pokemons[0])
+            teams = getUniqueTeams(teams, pokemons)
+        }
     }
     return {leads: leadArray, teams: teams, outcomes: outcomes}
 }

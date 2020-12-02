@@ -37,8 +37,7 @@ def executeReIndex(userInput):
 
         with open(dataPath, "w") as f:
             for i,line in enumerate(content,0):
-                if line != '':
-                    f.write(line + "\n")
+                f.write(line + "\n")
 
         return ("","")
 
