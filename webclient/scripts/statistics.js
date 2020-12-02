@@ -15,6 +15,10 @@ function createStatistics(data, startIndex, daily, league) {
             break;
         }
 
+        if (data[i].startsWith("~ts")) {
+            continue
+        }
+
         if(data[i].startsWith("- ")) {
             if (league === undefined) {
                 continue;

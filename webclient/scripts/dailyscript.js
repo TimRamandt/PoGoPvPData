@@ -1,6 +1,7 @@
 import { createStatistics, pokemonsToArray } from './statistics.js'
 import { drawWinRatio } from './ratioBar.js'
 
+var dataObject = {}
 on_load()
 
 var input = document.getElementById("currentView");
@@ -16,23 +17,17 @@ async function switchView(e) {
 
         var currentView = parseInt(document.getElementById("currentView").value);
 
-        const dataResponse = await fetch("http://localhost:8088/data/s5/data.txt")
-        const data = (await dataResponse.text()).split("\n")
-
-        const indexFileResponse = await fetch("http://localhost:8088/data/s5/sIndex.txt")
-        const indexFile = (await indexFileResponse.text()).split("\n")
-        
-        var indexFileLine = (indexFile.length) - currentView;
+        var indexFileLine = dataObject.indexes.startOfDay.length - currentView;
 
         //to prevent out of bound exceptions
         if (indexFileLine < 0) {
             indexFileLine = 0;
         } 
 
-        parseData(data, indexFile[indexFileLine])
-        fillDate(data, parseInt(indexFile[indexFileLine]))
+        parseData(dataObject.data, dataObject.indexes.startOfDay[indexFileLine])
+        fillDate(dataObject.data, parseInt(dataObject.indexes.startOfDay[indexFileLine]))
 
-        var statistics = createStatistics(data, indexFile[indexFileLine], true, undefined)
+        var statistics = createStatistics(dataObject.data, dataObject.indexes.startOfDay[indexFileLine], true, undefined)
         drawWinRatio(statistics.outcomes)
         showStatistics(statistics)
 }
@@ -51,20 +46,20 @@ function resetUI() {
 }
 
 async function on_load() {
-    const dataResponse = await fetch("http://localhost:8088/data/s5/data.txt")
-    const data = (await dataResponse.text()).split("\n")
+    const dataResponse = await fetch("http://localhost:8088/data/s6/data.txt")
+    const dataRaw = (await dataResponse.text()).split("\n")
     
-    const indexFileResponse = await fetch("http://localhost:8088/data/s5/sIndex.txt")
-    const indexFile = (await indexFileResponse.text()).split("\n")
-    console.log(indexFile)
-    fillAmountOfDays(indexFile)
+    var indexesObject = {startOfDay:dataRaw[0].split(";")}
+    dataObject = {indexes:indexesObject, data:dataRaw}
 
-    var recentIndex = indexFile[indexFile.length-1]
-    var statistics = createStatistics(data, recentIndex, true, undefined)
+    fillAmountOfDays(dataObject.indexes.startOfDay)
+
+    var recentIndex = dataObject.indexes.startOfDay[dataObject.indexes.startOfDay.length-1]
+    var statistics = createStatistics(dataObject.data, recentIndex, true, undefined)
 
     showStatistics(statistics)
-    fillDate(data, parseInt(recentIndex))
-    parseData(data, parseInt(recentIndex))
+    fillDate(dataObject.data, parseInt(recentIndex))
+    parseData(dataObject.data, parseInt(recentIndex))
     drawWinRatio(statistics.outcomes)
 }
 
@@ -82,6 +77,10 @@ function parseData(lines, indexStart) {
     var battles = 0;
     for (var lineIndex = parseInt(indexStart)+1; lineIndex < lines.length; lineIndex++) {
         console.log(lines[lineIndex])
+
+        if(lines[lineIndex].startsWith("~ts")) {
+            continue;
+        }
 
         if(lines[lineIndex].startsWith("- ")) {
             break;

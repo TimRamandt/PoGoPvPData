@@ -2,7 +2,7 @@ import { createStatistics, getLeague } from './statistics.js'
 import { drawWinRatio } from './ratioBar.js'
 
 var leagueOptions = new Array();
-var dataObject = "";
+var dataObject = {};
 on_load()
 
 async function on_load() {
@@ -12,7 +12,6 @@ async function on_load() {
 
     var indexesObject = {startOfDay:dataRaw[0].split(";")}
     dataObject = {indexes:indexesObject, data:dataRaw}
-    console.log(dataObject)
     loadLeagueOptions(dataObject)
     loadLeagueOptionsUI()
 }
