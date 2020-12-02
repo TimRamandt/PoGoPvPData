@@ -1,13 +1,16 @@
 import datetime
 import sys
+import os.path
 from colorama import Fore 
-from leagues import selectLeague
+from leagues import selectLeague, getSeasonOptions
 from teamsetCmd import executeTeamSet
 from battlerecordCmd import registerBattleRecord
 
+TITLE = "Pokemon Go PvP Data Collector" 
+VERSION = "v0.2-alpha"
 
 def launch():
-    dataPath = "webclient/data/s5/data.txt"
+    dataPath = getSeasonFilePath()
     indexPath = "webclient/data/s5/sIndex.txt"
 
     testApp = False 
@@ -16,8 +19,8 @@ def launch():
         dataPath = "webclient/data/s4/testData.txt"
         indexPath = "webclient/data/s4/sIndex.txt"
 
-    print("Pokemon Go PvP Data Collector.")
-    print("v0.2-alpha")
+    print(TITLE)
+    print(VERSION)
 
     #loading the commands from the other python files
     commands = [executeTeamSet, registerBattleRecord]
@@ -35,6 +38,10 @@ def launch():
     #battle registration
     while amountOfbattles < 25:
         userInput = input("> ")
+
+        if userInput == "exit":
+           print(TITLE + " has been terminated by the user")
+           return
 
         if (userInput == "reindex"):
             print("reindexing...")
@@ -65,27 +72,40 @@ def determineRemainingBattles(dataPath, indexPath, league):
     content = open(dataPath, "r").read().splitlines()
 
     if len(content) <= 0:
-        print("A fresh season! Good luck trainer!")
-        writeToFile("- "+ league + " "  + datetime.date.today().strftime("%Y-%m-%d") + "\n", dataPath)
-        reIndex(dataPath, indexPath)
+        print("Good luck in the new season, trainer!")
+        writeToFile("- "+ league + " "  + datetime.date.today().strftime("%Y-%m-%d"), dataPath)
         return 0
 
     lineIndex = len(content) - 1
     amountOfBattles = 0
     while lineIndex >= 0:
+        if content[lineIndex] == "":
+            lineIndex -= 1
+            continue
+
         if content[lineIndex].startswith('- '):
             if isInPast(content[lineIndex].split(' ')[2]):
-                writeToFile("- " + league + " " + datetime.date.today().strftime("%Y-%m-%d") + "\n", dataPath)
+                writeToFile("- " + league + " " + datetime.date.today().strftime("%Y-%m-%d"), dataPath)
                 reIndex(dataPath, indexPath)
                 return 0
             
-            print("You have do " + str(amountOfBattles) + " battles so far.")
+            print("You have done " + str(amountOfBattles) + " battles so far.")
             return amountOfBattles
 
         amountOfBattles += 1
         lineIndex -= 1
 
     return 0
+
+def getSeasonFilePath():
+    basePath = "./webclient/data/" + getSeasonOptions()[0]
+    dataPath = basePath + "/data.txt"
+    if os.path.isdir(basePath) != True:
+        os.mkdir(basePath)
+        open(dataPath, "w")
+
+    return dataPath 
+
 
 def isInPast(strDate):
     now = datetime.date.today()

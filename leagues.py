@@ -1,26 +1,30 @@
 from datetime import datetime, timedelta
 import re
 
-def getLeagueOptions():
+# returns a tuple where
+# [0] current season (str)
+# [1] open leagues (str)
+def getSeasonOptions():
     schedule = open("./leagues/league.schedule", "r").read().splitlines()
 
+    currentSeason = ""
     for line in schedule:
         if line.startswith("season"):
-            #logic about this soon tm
+            currentSeason = "s" + extractSeasonNumber(line) 
             continue
         if checkScheduleEntry(line):
-            return line.split(":")[0]
+            return (currentSeason, line.split(":")[0])
 
     return "error with league.schedule"
 
 def selectLeague(infoMethodCall, errorMethodCall):
-    options = getLeagueOptions().split(',')
+    options = getSeasonOptions()[1].split(',')
     if len(options) <= 1:
         infoMethodCall("current league is set on ", options[0])
         return getLeagueAbbrivation(options[0]) 
     
     print("Which league are you participating in? The following leagues are open:")
-    infoMethodCall("",getLeagueOptions())
+    infoMethodCall("",getSeasonOptions()[1])
     print("please type in the correct abbreviation.")
 
     while True:
@@ -70,3 +74,8 @@ def getGameTime(timeZone):
 def parseTime(date):
     dateArray = date.split("-")
     return datetime(int(dateArray[2]),int(dateArray[1]),int(dateArray[0]),13,0)
+
+def extractSeasonNumber(userInput): 
+    if userInput.startswith("season"):
+        return userInput[6:len(list(userInput))].strip()
+    return "ERR: season keyword is missing"
