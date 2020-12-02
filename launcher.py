@@ -1,9 +1,10 @@
 import datetime
 import sys
-import os.path
+from dataHandler import getSeasonFilePath
 from colorama import Fore 
 from leagues import selectLeague, getSeasonOptions
 from teamsetCmd import executeTeamSet
+from reindexCmd import executeReIndex
 from battlerecordCmd import registerBattleRecord
 
 TITLE = "Pokemon Go PvP Data Collector" 
@@ -23,7 +24,7 @@ def launch():
     print(VERSION)
 
     #loading the commands from the other python files
-    commands = [executeTeamSet, registerBattleRecord]
+    commands = [executeTeamSet, executeReIndex ,registerBattleRecord]
 
     league = selectLeague(infoMessage, errorMessage)
 
@@ -42,11 +43,6 @@ def launch():
         if userInput == "exit":
            print(TITLE + " has been terminated by the user")
            return
-
-        if (userInput == "reindex"):
-            print("reindexing...")
-            reIndex(dataPath, indexPath)
-            continue
 
         for command in commands:
             result = command(userInput)
@@ -71,7 +67,7 @@ def launch():
 def determineRemainingBattles(dataPath, indexPath, league):
     content = open(dataPath, "r").read().splitlines()
 
-    if len(content) <= 0:
+    if len(content) <= 3:
         print("Good luck in the new season, trainer!")
         writeToFile("- "+ league + " "  + datetime.date.today().strftime("%Y-%m-%d"), dataPath)
         return 0
@@ -97,14 +93,6 @@ def determineRemainingBattles(dataPath, indexPath, league):
 
     return 0
 
-def getSeasonFilePath():
-    basePath = "./webclient/data/" + getSeasonOptions()[0]
-    dataPath = basePath + "/data.txt"
-    if os.path.isdir(basePath) != True:
-        os.mkdir(basePath)
-        open(dataPath, "w")
-
-    return dataPath 
 
 
 def isInPast(strDate):
