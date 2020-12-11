@@ -24,6 +24,8 @@ async function switchView(e) {
             indexFileLine = 0;
         } 
 
+        showTeams(indexFileLine)
+
         parseData(dataObject.data, dataObject.indexes.startOfDay[indexFileLine])
         fillDate(dataObject.data, parseInt(dataObject.indexes.startOfDay[indexFileLine]))
 
@@ -49,13 +51,20 @@ async function on_load() {
     const dataResponse = await fetch("http://localhost:8088/data/s6/data.txt")
     const dataRaw = (await dataResponse.text()).split("\n")
     
-    var indexesObject = {startOfDay:dataRaw[0].split(";")}
+    var indexesObject = {startOfDay:dataRaw[0].split(";"), teamIndexes: dataRaw[1].split(";")}
     dataObject = {indexes:indexesObject, data:dataRaw}
+    
+    console.log(dataObject)
 
     fillAmountOfDays(dataObject.indexes.startOfDay)
 
-    var recentIndex = dataObject.indexes.startOfDay[dataObject.indexes.startOfDay.length-1]
+    var lastIndex = getLastIndex(dataObject.indexes.startOfDay)
+    var recentIndex = dataObject.indexes.startOfDay[lastIndex]
     var statistics = createStatistics(dataObject.data, recentIndex, true, undefined)
+
+    console.log("the team is:", showTeams(lastIndex))
+
+    showTeams(dataObject.indexes.startOfDay.length-1)
 
     showStatistics(statistics)
     fillDate(dataObject.data, parseInt(recentIndex))
@@ -137,7 +146,6 @@ function visualizeData(outcome, pokemons, setNr) {
     table.append(row);
 }
 
-
 function showSetUI(setNr) {
     var setdiv = document.getElementById("set" + setNr)
     setdiv.classList.remove("invisible")
@@ -176,7 +184,6 @@ function showMostCommonLead(leads) {
     document.getElementById("lead").innerText = "most common lead: " + lead.lead + " (" + lead.encountered + ")" 
 }
 
-
 function showMostCommonTeam(teams) {
     var team = teams[0]
     for(var i = 1; i < teams.length; i++) {
@@ -191,4 +198,23 @@ function showMostCommonTeam(teams) {
 
 function showUniqueTeamCount(amount) {
     document.getElementById("unique_teams").innerText = "unique teams: " + amount 
+}
+
+//move to team.js
+function showTeams(dayIndex) {
+    var indexObject = dataObject.indexes;
+    var lastIndexDay = getLastIndex(indexObject.startOfDay);
+    var lastIndexTeams = getLastIndex(indexObject.teamIndexes);
+    if(dayIndex <= lastIndexDay) {
+        //means we have the lastest day
+        if (indexObject.teamIndexes[lastIndexTeams] < indexObject.startOfDay[lastIndexDay]) {
+            var lastTeamUsed = parseInt(indexObject.teamIndexes[lastIndexTeams]); 
+            //means we are using a team from the previous day
+            return dataObject.data[lastTeamUsed].split(":")[1] 
+        }
+    }
+}
+
+function getLastIndex(array) {
+    return array.length - 1;
 }
