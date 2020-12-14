@@ -1,5 +1,7 @@
 import { createStatistics, pokemonsToArray } from './statistics.js'
 import { drawWinRatio } from './ratioBar.js'
+import { initTeams, showTeams } from './teams.js'
+import { fetchDataObject } from './dataHandling.js'
 
 var dataObject = {}
 on_load()
@@ -48,20 +50,18 @@ function resetUI() {
 }
 
 async function on_load() {
-    const dataResponse = await fetch("http://localhost:8088/data/s6/data.txt")
-    const dataRaw = (await dataResponse.text()).split("\n")
     
-    var indexesObject = {startOfDay:dataRaw[0].split(";"), teamIndexes: dataRaw[1].split(";")}
-    dataObject = {indexes:indexesObject, data:dataRaw}
+    dataObject = await fetchDataObject() 
     
     console.log(dataObject)
 
     fillAmountOfDays(dataObject.indexes.startOfDay)
 
-    var lastIndex = getLastIndex(dataObject.indexes.startOfDay)
+    var lastIndex = dataObject.indexes.startOfDay.length -1
     var recentIndex = dataObject.indexes.startOfDay[lastIndex]
     var statistics = createStatistics(dataObject.data, recentIndex, true, undefined)
 
+    initTeams(dataObject)
     console.log("the team is:", showTeams(lastIndex))
 
     showTeams(dataObject.indexes.startOfDay.length-1)
@@ -198,23 +198,4 @@ function showMostCommonTeam(teams) {
 
 function showUniqueTeamCount(amount) {
     document.getElementById("unique_teams").innerText = "unique teams: " + amount 
-}
-
-//move to team.js
-function showTeams(dayIndex) {
-    var indexObject = dataObject.indexes;
-    var lastIndexDay = getLastIndex(indexObject.startOfDay);
-    var lastIndexTeams = getLastIndex(indexObject.teamIndexes);
-    if(dayIndex <= lastIndexDay) {
-        //means we have the lastest day
-        if (indexObject.teamIndexes[lastIndexTeams] < indexObject.startOfDay[lastIndexDay]) {
-            var lastTeamUsed = parseInt(indexObject.teamIndexes[lastIndexTeams]); 
-            //means we are using a team from the previous day
-            return dataObject.data[lastTeamUsed].split(":")[1] 
-        }
-    }
-}
-
-function getLastIndex(array) {
-    return array.length - 1;
 }
