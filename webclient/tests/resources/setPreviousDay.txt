@@ -1,0 +1,21 @@
+3;10
+4
+x
+GL 13-12-2020
+~ ts: abomasnow, mew, gl_stunfisk
+W: al_marowak, emolga, swampert
+W: azumaril, skarmory, driftblim
+L: cesnaught, altaria, melmetal
+W: hypno, umbreon, toxicroak
+W: al_marowak, gl_stunfisk, serperior
+- GL 2020-12-11
+W: al_marowak, toxicroak, hypno
+W: azumaril, jirachi, stunfisk
+W: gl_stunfisk, granbull, cestnaught
+W: melmetal, mew, ?
+L: bastiodon, azumaril, driftblim
+L: sh_machamp, tentacool, skarmory
+W: sh_hypno, azumaril, abomasnow
+L: bastiodon, azumaril, venusaur
+W: rapidash, azumaril, toxicroak
+L: skarmory, azumaril, gl_stunfisk

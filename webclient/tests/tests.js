@@ -1,11 +1,15 @@
 import { createStatistics} from '../scripts/statistics.js'
+import { createDataObjectFromUrl} from '../scripts/dataHandling.js'
+import { showTeams, initTeams } from '../scripts/teams.js'
+
 on_load()
 
-function on_load() {
+async function on_load() {
     console.log("--!--TEST PAGE --!--")
     test_Simple_Lead_Statistic()
     test_Lead_Statistic()
     test_Unique_teams()
+    await test_Team_Set_Previous_Day()
 }
 
 function test_Simple_Lead_Statistic() {
@@ -56,6 +60,27 @@ function test_Unique_teams() {
     }
 
     markTest(id, true)
+}
+
+async function test_Team_Set_Previous_Day() {
+   var id = "testTeamSetPreviousDay";
+   var dataObject = await createDataObjectFromUrl("http://localhost:8088/tests/resources/setPreviousDay.txt")
+   initTeams(dataObject)
+
+   console.log("teams is undefined in test with id:", test_Team_Set_Previous_Day.name)
+   var teams = showTeams(parseInt(dataObject.indexes.startOfDay[1]))
+   if (teams === undefined || teams.length !== 1) {
+        markTest(id, false)
+        return;
+   }
+
+   var expected = ["abomasnow","mew","gl_stunfisk"]
+   for (var i = 0; i < expected.length; i++) {
+       if (expected[i] !== teams[0][i]) {
+            markTest(id, false)
+       }
+   }
+   markTest(id, true)
 }
 
 function arrayCheck(expected, actual, teamFlag) {
