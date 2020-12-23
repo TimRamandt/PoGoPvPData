@@ -13,29 +13,45 @@ function initTeams(dataObject) {
     data = dataObject.data;
 }
 
-function showTeams(startIndex) {
+function showTeams(start, end) {
     checkIfTeamsAreIninted();
     var requestedUserTeams = new Array(); 
 
-    for(var i = getLastIndex(userTeams); i > -1; i--) {
-        var userTeamIndex = parseInt(userTeams[i]) 
-        console.log(userTeamIndex < startIndex, startIndex, userTeamIndex)
-        if(userTeamIndex < startIndex) {
-            requestedUserTeams.push(data[userTeamIndex].split(":")[1]) 
-        }
+    var startValue = start
+
+    start = lookUpIndex(start+1, userTeams)
+    //check if the next line is a team switch otherwise we'd have to go back to the previous line
+    if (start === -1) {
+        start = getNearestPriorToStart(startValue, userTeams);
+    }
+
+    if(end == undefined) {
+        end = getLastIndex(userTeams); 
+    }
+
+    for(var i = start; i < end+1; i++) {
+        var teamIndex = parseInt(userTeams[i])
+        requestedUserTeams.push(data[teamIndex].split(":")[1].trim())     
     }
 
     return requestedUserTeams;
+}
 
-    /*if(lastUserTeam < startIndex) {
-        console.log("okkkkkkkkkkkkkkkkk")
-        //means we have the lastest day
-        if (userTeams[lastIndexTeams] < startOfDays[startOfDay]) {
-            console.log("heyyyyyyyyyyyyyyy")
-            //means we are using a team from the previous day
-            return data[lastUserTeam].split(":")[1] 
+function getNearestPriorToStart(start, array) {
+    if(array.length < 1) {
+        return 0;
+    }
+
+    var nearLeftIndex = 0;
+    for(var i = 0; i < array.length; i++) {
+        if (parseInt(array[i]) < start) {
+            nearLeftIndex = i;
+        } else {
+            return nearLeftIndex;
         }
-    }*/
+    }
+
+    return getLastIndex(array); 
 }
 
 function getLastIndex(array) {
@@ -49,4 +65,14 @@ function checkIfTeamsAreIninted() {
     if (startOfDays === undefined) {
         console.log("ERR: Need to call the initTeam function first to run this module!")
     }
+}
+
+function lookUpIndex(value, array) {
+    for(var i = 0; i < array.length; i++) {
+        if(parseInt(array[i]) === value) {
+            return i;
+        }
+    }
+
+    return -1;
 }

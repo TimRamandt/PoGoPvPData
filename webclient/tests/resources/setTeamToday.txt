@@ -1,5 +1,5 @@
-3;10
-4;16
+3;16
+4;10;22
 x
 GL 13-12-2020
 ~ ts: abomasnow, mew, gl_stunfisk
@@ -8,6 +8,12 @@ W: azumaril, skarmory, driftblim
 L: cesnaught, altaria, melmetal
 W: hypno, umbreon, toxicroak
 W: al_marowak, gl_stunfisk, serperior
+~ts: obstagoon, azumarill, hypno
+W: al_riachu, linoone, azumarill
+L: clefable, wigglytuff, al_ninetales
+L: toxicroak, skarmory, sableye
+W: gl_stunfisk, altaria, sh_machamp
+W: azumarill, rapidash, al_marowak
 - GL 2020-12-11
 W: al_marowak, toxicroak, hypno
 W: azumaril, jirachi, stunfisk
