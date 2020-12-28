@@ -20,7 +20,7 @@
 
 .teamDisplayTable {
     margin-left: 10px;
-    width: 350px;
+    width: 375px;
 }
 
 .textBox {
@@ -37,7 +37,7 @@ label{
 
 #stats {
     position: relative;
-    left: -15%;
+    left: -17%;
 }
 
 .highlight {

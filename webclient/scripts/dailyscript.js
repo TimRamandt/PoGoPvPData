@@ -20,11 +20,16 @@ async function switchView() {
             indexFileLine = 0;
         } 
 
-        drawSetUI(parseDailySets(dataObject, dataObject.indexes.startOfDay[indexFileLine]))
+        var setData = parseDailySets(dataObject, dataObject.indexes.startOfDay[indexFileLine]) 
+        console.log(setData)
+
+        drawSetUI(setData)
+        drawUserTeamsTable(setData.UserTeams) 
+
         fillDate(dataObject.data, parseInt(dataObject.indexes.startOfDay[indexFileLine]))
 
         var statistics = createStatistics(dataObject.data, dataObject.indexes.startOfDay[indexFileLine], true, undefined)
-        drawWinRatio(statistics.outcomes)
+        drawWinRatio(statistics.outcomes, 1155)
         showStatistics(statistics)
 }
 
@@ -69,7 +74,12 @@ async function on_load() {
 
     showStatistics(statistics)
     fillDate(dataObject.data, parseInt(recentIndex))
-    drawSetUI(parseDailySets(dataObject, parseInt(recentIndex)))
+
+    var setData = parseDailySets(dataObject, recentIndex) 
+    console.log(setData)
+
+    drawSetUI(setData)
+    drawUserTeamsTable(setData.UserTeams, 1155) 
     drawWinRatio(statistics.outcomes)
 }
 
@@ -100,12 +110,15 @@ function parseDailySets(dataObject, indexStart) {
             
             var team = pokemonsToArray(data[lineIndex].split(':')[1].trim())
             var teamIndex = findTeamIndex(userTeams, team)
+
             if (teamIndex < 0) {
+                teamId = userTeams.length;
                 userTeams.push(parseTeamObject(data[lineIndex].split(':')[1].trim()))
                 continue;
             }
 
             teamId = teamIndex;
+            continue;
         }
 
         if (data[lineIndex] === "") {
@@ -167,6 +180,9 @@ function addBattleRecordToSetTable(battleRecord, setNr) {
     var clazz = document.createAttribute("class");
     clazz.value = battleRecord.outcome;
     row.setAttributeNode(clazz)
+    var dataTeamId = document.createAttribute("data-team-id");
+    dataTeamId.value = battleRecord.teamId;
+    row.setAttributeNode(dataTeamId)
 
     for (var pokemonIndex = 0; pokemonIndex < battleRecord.pokemons.length; pokemonIndex++) {
         var tabledata = document.createElement("td");
@@ -177,6 +193,31 @@ function addBattleRecordToSetTable(battleRecord, setNr) {
     }
 
     table.append(row);
+}
+
+function drawUserTeamsTable(userTeams) {
+    var table = document.getElementById("tableUserTeams");
+
+    table.innerHTML = "";
+
+    for(var i = 0; i < userTeams.length; i++) {
+        var row = document.createElement("tr");
+
+        row.append(createTableData(userTeams[i].lead))
+        for(var j = 0; j < userTeams[i].backEnd.length; j++) {
+            row.append(createTableData(userTeams[i].backEnd[j]))
+        }
+
+        table.append(row)
+    }
+}
+
+function createTableData(data) {
+    var tabledata = document.createElement("td");
+    var textNode = document.createTextNode(data);
+    tabledata.append(textNode)
+
+    return tabledata;
 }
 
 function replaceClassAttributes(value, parentId) {

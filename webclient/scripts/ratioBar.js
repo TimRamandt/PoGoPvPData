@@ -1,11 +1,14 @@
 export { drawWinRatio }
 
-function drawWinRatio(outcomes) {
+function drawWinRatio(outcomes, width) {
+    if (width === undefined) {
+        width = 1080
+    }
     var totalAmount = outcomes.wins + outcomes.loses + outcomes.draws;
     var percentages = {w: outcomes.wins/totalAmount, l: outcomes.loses/totalAmount, d: outcomes.draws/totalAmount}
 
     var canvas = document.getElementById("ratioBar");
-    canvas.width  = 1080;
+    canvas.width  = width;
     canvas.height = 90;
 
     var winWidth = percentages.w*canvas.width 
