@@ -2,7 +2,7 @@
 4
 x
 GL 13-12-2020
-~ ts: abomasnow, mew, gl_stunfisk
+~ts: abomasnow, mew, gl_stunfisk
 W: al_marowak, emolga, swampert
 W: azumaril, skarmory, driftblim
 L: cesnaught, altaria, melmetal

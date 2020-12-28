@@ -1,10 +1,11 @@
-export { createStatistics, pokemonsToArray, getLeague }
+export { createStatistics, pokemonsToArray, getLeague, findTeamIndex, parseTeamObject }
 
 function createStatistics(data, startIndex, daily, league) {
     var leadArray = new Array();
     var teams = new Array();
     var outcomes = {wins: 0, loses:0, draws: 0}
     var requestedLeague = true;
+
     if (daily === true) {
         //shifting the index to the next line 
         //because the first line is - <league> <date>
@@ -53,7 +54,7 @@ function createStatistics(data, startIndex, daily, league) {
         if (seperatedData[1] !== undefined) {
             var pokemons = pokemonsToArray(seperatedData[1])
             leadArray = getLeadStats(leadArray, pokemons[0])
-            teams = getUniqueTeams(teams, pokemons)
+            teams = getOpponentTeams(teams, pokemons)
         }
     }
     return {leads: leadArray, teams: teams, outcomes: outcomes}
@@ -80,16 +81,32 @@ function getLeadStats(leads, pokemon) {
     return leads;
 }
 
-function getUniqueTeams(teams, team) {
-    if (checkIfInvalidTeam(team)) {
+function getOpponentTeams(teams, team) {
+    if(!isValidTeam(team)) {
         return teams;
     }
 
-    //TO DO: optimize this search algo. Linear search will do for now
-    if(teams.length === 0) {
+    var exisitingTeamIndex = findTeamIndex(teams, team);
+    if (exisitingTeamIndex < 0) {
+        //team doesn't exist, add it to the array
         teams.push({lead:team[0], backEnd: [team[1],team[2]], encountered:1})
         return teams;
     }
+
+    teams[exisitingTeamIndex].encountered++;
+    return reOrder(teams, exisitingTeamIndex)
+}
+
+function findTeamIndex(teams, team) {
+    if (!isValidTeam(team)) {
+        return null;
+    }
+
+    if(teams.length === 0) {
+        return -1;
+    }
+
+    //TO DO: optimize this search algo. Linear search will do for now
 
     //for example:
     //UNIQUE: togekiss, swampert, metagross
@@ -98,25 +115,25 @@ function getUniqueTeams(teams, team) {
     for (var i = 0; i < teams.length; i++) { 
         //check if the team exists
         if(teams[i].lead === team[0] && !isUniqueBackEnd(team, teams[i].backEnd)) {
-            teams[i].encountered++;
-            return reOrder(teams, i)
+            return i;
         }        
     }
-
-    //team doesn't exist, add it to the array
-    teams.push({lead:team[0], backEnd: [team[1],team[2]], encountered:1})
-
-    return teams;
+    return -1;
 }
 
-function checkIfInvalidTeam(team) {
+function parseTeamObject(strTeam) {
+    var teamMembers = pokemonsToArray(strTeam);
+    return {lead: teamMembers[0], backEnd: [teamMembers[1], teamMembers[2]]}
+}
+
+function isValidTeam(team) {
     for(var i = 0; i < team.length; i++) {
         if (team[i] === "?") {
-            return true;
+            return false;
         }
     }    
 
-    return false;
+    return true;
 }
 
 function isUniqueBackEnd(team, backEnd) {
@@ -206,7 +223,6 @@ function getLeague(line) {
     var charArrayLine = Array.from(line) 
     var league = ""; 
     for(var j = 0; j < charArrayLine.length; j++) {
-        console.log()
         if (charArrayLine[j] !== "" && isAlphaOrUnderscore(charArrayLine[j])){
             league = league + charArrayLine[j]
         }

@@ -20,7 +20,7 @@ W: azumaril, jirachi, stunfisk
 W: gl_stunfisk, granbull, cestnaught
 W: melmetal, mew, ?
 L: bastiodon, azumaril, driftblim
-~ ts: rainy_castform, al_marowak, wigglytuff
+~ts: rainy_castform, al_marowak, wigglytuff
 L: sh_machamp, tentacool, skarmory
 W: sh_hypno, azumaril, abomasnow
 L: bastiodon, azumaril, venusaur

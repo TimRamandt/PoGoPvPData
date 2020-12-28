@@ -9,6 +9,6 @@ async function createDataObjectFromUrl(location) {
     const dataResponse = await fetch(location)
     const dataRaw = (await dataResponse.text()).split("\n")
     
-    var indexesObject = {startOfDay:dataRaw[0].split(";"), teamIndexes: dataRaw[1].split(";")}
+    var indexesObject = {startOfDay:dataRaw[0].split(";"), userTeams: dataRaw[1].split(";")}
     return {indexes:indexesObject, data:dataRaw}
 }

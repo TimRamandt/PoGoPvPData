@@ -1,20 +1,14 @@
-import { createStatistics, pokemonsToArray } from './statistics.js'
+import { createStatistics, findTeamIndex, parseTeamObject, pokemonsToArray } from './statistics.js'
 import { drawWinRatio } from './ratioBar.js'
-import { initTeams, showTeams } from './teams.js'
 import { fetchDataObject } from './dataHandling.js'
+import { getNearestPriorToValue } from './ArrayHelpers.js'
+
+export {parseDailySets}
 
 var dataObject = {}
 on_load()
 
-var input = document.getElementById("currentView");
-input.addEventListener("keypress", function(event) {
-    if (event.keyCode === 13) {
-        event.preventDefault();
-        switchView(event)
-    }
-});
-
-async function switchView(e) {
+async function switchView() {
         resetUI()
 
         var currentView = parseInt(document.getElementById("currentView").value);
@@ -26,9 +20,7 @@ async function switchView(e) {
             indexFileLine = 0;
         } 
 
-        showTeams(indexFileLine)
-
-        parseData(dataObject.data, dataObject.indexes.startOfDay[indexFileLine])
+        drawSetUI(parseDailySets(dataObject, dataObject.indexes.startOfDay[indexFileLine]))
         fillDate(dataObject.data, parseInt(dataObject.indexes.startOfDay[indexFileLine]))
 
         var statistics = createStatistics(dataObject.data, dataObject.indexes.startOfDay[indexFileLine], true, undefined)
@@ -51,6 +43,20 @@ function resetUI() {
 
 async function on_load() {
     
+    var txbCurrentView = document.getElementById("currentView");
+    if (txbCurrentView === null) {
+        //have to do this bs, because if an exported function will try to resolve txbCurrentView
+        //and it'll fail since currentView will not be there
+        return;
+    }
+
+    txbCurrentView.addEventListener("keypress", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            switchView()
+        }
+    });
+
     dataObject = await fetchDataObject() 
     
     console.log(dataObject)
@@ -61,14 +67,9 @@ async function on_load() {
     var recentIndex = dataObject.indexes.startOfDay[lastIndex]
     var statistics = createStatistics(dataObject.data, recentIndex, true, undefined)
 
-    initTeams(dataObject)
-    console.log("the team is:", showTeams(lastIndex))
-
-    showTeams(dataObject.indexes.startOfDay.length-1)
-
     showStatistics(statistics)
     fillDate(dataObject.data, parseInt(recentIndex))
-    parseData(dataObject.data, parseInt(recentIndex))
+    drawSetUI(parseDailySets(dataObject, parseInt(recentIndex)))
     drawWinRatio(statistics.outcomes)
 }
 
@@ -78,32 +79,44 @@ function fillAmountOfDays(indexFile) {
     lblAmountOfDays.replaceWith(textNode)
 }
 
-function parseData(lines, indexStart) {
-    console.log(lines)
+function parseDailySets(dataObject, indexStart) {
     var sets = new Array()
     var set = new Array()
+    var userTeams = new Array()
 
     var battles = 0;
-    for (var lineIndex = parseInt(indexStart)+1; lineIndex < lines.length; lineIndex++) {
-        console.log(lines[lineIndex])
+    var data = dataObject.data;
+    var teamId = 0;
+    for (var lineIndex = parseInt(indexStart)+1; lineIndex < data.length; lineIndex++) {
 
-        if(lines[lineIndex].startsWith("~ts")) {
-            continue;
-        }
-
-        if(lines[lineIndex].startsWith("- ")) {
+        if(data[lineIndex].startsWith("- ")) {
             break;
         }
 
-        if (lines[lineIndex] === "") {
+        if(data[lineIndex].startsWith("~ts")) {
+            if (userTeams.length === 0 && battles !== 0) {
+                userTeams.push(getPriorTeam(dataObject, indexStart))
+            }
+            
+            var team = pokemonsToArray(data[lineIndex].split(':')[1].trim())
+            var teamIndex = findTeamIndex(userTeams, team)
+            if (teamIndex < 0) {
+                userTeams.push(parseTeamObject(data[lineIndex].split(':')[1].trim()))
+                continue;
+            }
+
+            teamId = teamIndex;
+        }
+
+        if (data[lineIndex] === "") {
             continue;
         }
 
-        var split = lines[lineIndex].split(":");
+        var split = data[lineIndex].split(":");
 
         var outcome = split[0];
 
-        var battle = {outcome: outcome, pokemons: pokemonsToArray(split[1])}
+        var battle = {outcome: outcome, pokemons: pokemonsToArray(split[1]), teamId: teamId}
         set.push(battle)
 
         battles++;
@@ -112,45 +125,58 @@ function parseData(lines, indexStart) {
             set = new Array();
         }
     }
-    console.log(sets)
 
-    //displaying the data we parsed
+    if (userTeams.length === 0) {
+        userTeams.push(getPriorTeam(dataObject, indexStart))
+    }
+    return {sets: sets, UserTeams: userTeams}
+}
+
+function getPriorTeam(dataObject, startIndex) {
+    var teamIndex = dataObject.indexes.userTeams[getNearestPriorToValue(startIndex, dataObject.indexes.userTeams)]
+    return parseTeamObject(dataObject.data[parseInt(teamIndex)].split(':')[1].trim());
+}
+
+function drawSetUI(setData) {
+    var sets = setData.sets
     for(var setIndex = 0; setIndex < sets.length; setIndex++) {
-        console.log(sets[setIndex])
-        //setIndex+1 because sets are 1 based (silly humans!)
-        showSetUI(setIndex+1);
+        //setNr is the human variant, and is 1 based
+        var setNr = setIndex+1;
+
+        showSetTable(setNr)
         for(var battleIndex = 0; battleIndex < sets[setIndex].length; battleIndex++) {
-            console.log(sets[setIndex][battleIndex])
-            visualizeData(sets[setIndex][battleIndex].outcome, sets[setIndex][battleIndex].pokemons, setIndex+1)
+            var battleRecord = sets[setIndex][battleIndex];
+            addBattleRecordToSetTable(battleRecord, setNr)
         }
     }
 }
 
-function visualizeData(outcome, pokemons, setNr) {
+function showSetTable(setNr) {
+    var setdiv = document.getElementById("set" + setNr)
+    setdiv.classList.remove("invisible")
+
+    replaceClassAttributes("hiden", "noSetMsg" + setNr)
+}
+
+function addBattleRecordToSetTable(battleRecord, setNr) {
+
+    //DOM stuff
     var table = document.getElementById("dataSet" + setNr);
     var row = document.createElement("tr");
 
     var clazz = document.createAttribute("class");
-    clazz.value = outcome;
+    clazz.value = battleRecord.outcome;
     row.setAttributeNode(clazz)
 
-    console.log(pokemons)
-    for (var pokemonIndex = 0; pokemonIndex < pokemons.length; pokemonIndex++) {
+    for (var pokemonIndex = 0; pokemonIndex < battleRecord.pokemons.length; pokemonIndex++) {
         var tabledata = document.createElement("td");
-        var textNode = document.createTextNode(pokemons[pokemonIndex]);
+        var textNode = document.createTextNode(battleRecord.pokemons[pokemonIndex]);
         tabledata.append(textNode)
 
         row.append(tabledata);
     }
 
     table.append(row);
-}
-
-function showSetUI(setNr) {
-    var setdiv = document.getElementById("set" + setNr)
-    setdiv.classList.remove("invisible")
-
-    replaceClassAttributes("hiden", "noSetMsg" + setNr)
 }
 
 function replaceClassAttributes(value, parentId) {
