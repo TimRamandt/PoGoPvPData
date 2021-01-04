@@ -29,7 +29,7 @@ async function switchView() {
         fillDate(dataObject.data, parseInt(dataObject.indexes.startOfDay[indexFileLine]))
 
         var statistics = createStatistics(dataObject.data, dataObject.indexes.startOfDay[indexFileLine], true, undefined)
-        drawWinRatio(statistics.outcomes, 1155)
+        drawWinRatio(statistics.outcomes, 1130)
         showStatistics(statistics)
 }
 
@@ -79,8 +79,8 @@ async function on_load() {
     console.log(setData)
 
     drawSetUI(setData)
-    drawUserTeamsTable(setData.UserTeams, 1155) 
-    drawWinRatio(statistics.outcomes)
+    drawUserTeamsTable(setData.UserTeams) 
+    drawWinRatio(statistics.outcomes, 1130)
 }
 
 function fillAmountOfDays(indexFile) {
@@ -177,12 +177,15 @@ function addBattleRecordToSetTable(battleRecord, setNr) {
     var table = document.getElementById("dataSet" + setNr);
     var row = document.createElement("tr");
 
-    var clazz = document.createAttribute("class");
-    clazz.value = battleRecord.outcome;
-    row.setAttributeNode(clazz)
-    var dataTeamId = document.createAttribute("data-team-id");
+    row.setAttributeNode(createClassAttribute(battleRecord.outcome))
+
+    var dataTeamId = document.createAttribute("data-battle-team-id");
     dataTeamId.value = battleRecord.teamId;
     row.setAttributeNode(dataTeamId)
+
+    var dataOutcome = document.createAttribute("data-outcome");
+    dataOutcome.value = battleRecord.outcome;
+    row.setAttributeNode(dataOutcome)
 
     for (var pokemonIndex = 0; pokemonIndex < battleRecord.pokemons.length; pokemonIndex++) {
         var tabledata = document.createElement("td");
@@ -202,6 +205,14 @@ function drawUserTeamsTable(userTeams) {
 
     for(var i = 0; i < userTeams.length; i++) {
         var row = document.createElement("tr");
+        var dataTeamId = document.createAttribute("data-team-id");
+        dataTeamId.value = i;
+        row.setAttributeNode(dataTeamId)
+
+        row.addEventListener("click", function(event) {
+            event.preventDefault();
+            highLightTeam(userTeams, this)
+        })
 
         row.append(createTableData(userTeams[i].lead))
         for(var j = 0; j < userTeams[i].backEnd.length; j++) {
@@ -212,6 +223,45 @@ function drawUserTeamsTable(userTeams) {
     }
 }
 
+function highLightTeam(userTeams, teamNode) {
+    if (userTeams.length <= 1) {
+        //if there is only 1 (or less) team, no need to highlight
+        return;
+    }
+
+    var userTeamSelected = "userTeamSelected"
+    var teamId = teamNode.getAttribute("data-team-id")
+
+
+    if(teamNode.getAttribute("class") === userTeamSelected) {
+        //reset back to normal
+        restoreBackToDefault();
+        teamNode.setAttributeNode(createClassAttribute(""))
+        return;
+    }
+
+    restoreBackToDefault();
+    var table = document.getElementById("tableUserTeams");
+    table.childNodes.forEach(tr => {
+        tr.setAttributeNode(createClassAttribute("")) 
+    });
+    teamNode.setAttributeNode(createClassAttribute(userTeamSelected))
+
+    var rows = document.getElementsByTagName("tr");
+    for(var i = 0; i < rows.length; i++) {
+        var battleUserTeamId = rows[i].getAttribute("data-battle-team-id"); 
+        if (battleUserTeamId === null || undefined) {
+            continue;
+        }
+
+        if (battleUserTeamId !== teamId) {
+            rows[i].setAttributeNode(createClassAttribute("teamDefocus"))
+        }
+    }
+    
+    console.log("teamId:", teamId)
+}
+
 function createTableData(data) {
     var tabledata = document.createElement("td");
     var textNode = document.createTextNode(data);
@@ -220,18 +270,33 @@ function createTableData(data) {
     return tabledata;
 }
 
+function createClassAttribute(value) {
+    var classNode = document.createAttribute("class")
+    classNode.value = value 
+    return classNode
+}
+
 function replaceClassAttributes(value, parentId) {
     var parent = document.getElementById(parentId)
-    var invisibleClass = document.createAttribute("class")
-    invisibleClass.value = value 
-    parent.setAttributeNode(invisibleClass)
+    parent.setAttributeNode(createClassAttribute(value))
+}
+
+function restoreBackToDefault() {
+    var rows = document.getElementsByTagName("tr");
+    for(var i = 0; i < rows.length; i++) {
+        var outcome = rows[i].getAttribute("data-outcome"); 
+        if (outcome === null || undefined) {
+            continue;
+        }
+
+        rows[i].setAttributeNode(createClassAttribute(outcome))
+    }
 }
 
 function fillDate(data, index) {
     var date = data[parseInt(index)].split(" ")[2]
     document.getElementById("date").innerText = date 
 }
-
 
 function showStatistics(statistics) {
     console.log(statistics)

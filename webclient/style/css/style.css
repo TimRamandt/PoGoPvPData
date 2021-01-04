@@ -49,3 +49,12 @@ label{
 .highlight, .leagueOption:hover {
     opacity: .5;
 }
+
+.teamDefocus {
+    opacity: 0.3;
+    background: #E1E1E1;
+}
+
+.userTeamSelected {
+    background: #58C4C5
+}
