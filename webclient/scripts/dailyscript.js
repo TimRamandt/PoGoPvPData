@@ -29,6 +29,8 @@ async function switchView() {
         fillDate(dataObject.data, parseInt(dataObject.indexes.startOfDay[indexFileLine]))
 
         var statistics = createStatistics(dataObject.data, dataObject.indexes.startOfDay[indexFileLine], true, undefined)
+        console.log("stats",statistics)
+
         drawWinRatio(statistics.outcomes, 1130)
         showStatistics(statistics)
 }
@@ -71,6 +73,7 @@ async function on_load() {
     var lastIndex = dataObject.indexes.startOfDay.length -1
     var recentIndex = dataObject.indexes.startOfDay[lastIndex]
     var statistics = createStatistics(dataObject.data, recentIndex, true, undefined)
+    console.log(statistics)
 
     showStatistics(statistics)
     fillDate(dataObject.data, parseInt(recentIndex))
@@ -172,7 +175,6 @@ function showSetTable(setNr) {
 }
 
 function addBattleRecordToSetTable(battleRecord, setNr) {
-
     //DOM stuff
     var table = document.getElementById("dataSet" + setNr);
     var row = document.createElement("tr");

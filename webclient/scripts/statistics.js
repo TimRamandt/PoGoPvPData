@@ -3,6 +3,8 @@ export { createStatistics, pokemonsToArray, getLeague, findTeamIndex, parseTeamO
 function createStatistics(data, startIndex, daily, league) {
     var leadArray = new Array();
     var teams = new Array();
+    var encounteredPokemons = new Array();
+
     var outcomes = {wins: 0, loses:0, draws: 0}
     var requestedLeague = true;
 
@@ -55,18 +57,61 @@ function createStatistics(data, startIndex, daily, league) {
             var pokemons = pokemonsToArray(seperatedData[1])
             leadArray = getLeadStats(leadArray, pokemons[0])
             teams = getOpponentTeams(teams, pokemons)
+
+            for(var p = 0; p < pokemons.length; p++) {
+                var isLead = false;
+
+                if (p === 0) {
+                    isLead = true;
+                }
+
+                if (pokemons[p] === "?") {
+                    //skip incomplete data
+                    continue;
+                }
+                encounteredPokemons = getEncounteredPokemons(pokemons[p], encounteredPokemons, isLead)
+            }
         }
     }
-    return {leads: leadArray, teams: teams, outcomes: outcomes}
+    return {leads: leadArray, teams: teams, outcomes: outcomes, encounteredPokemons: encounteredPokemons}
+}
+
+function getEncounteredPokemons(pokemon, encounteredPokemons, isLead) {
+    if (encounteredPokemons.length === 0) {
+        encounteredPokemons.push({pokemon: pokemon, encountered: 1, lead: 1})
+        return encounteredPokemons;
+    }
+
+    //TO DO: optimize this search algo. Linear search will do for now
+    for (var i = 0; i < encounteredPokemons.length; i++) { 
+        if(encounteredPokemons[i].pokemon === pokemon) {
+            encounteredPokemons[i].encountered++;
+            if (isLead) {
+                encounteredPokemons[i].lead++;
+            }
+            if (i > 0) {
+                return reOrder(encounteredPokemons, i)
+            }
+            return encounteredPokemons;
+        }
+    }
+
+    var leadStat = 0;
+    if (isLead) {
+        leadStat++;
+    }
+
+    encounteredPokemons.push({pokemon: pokemon, encountered: 1, lead: leadStat})
+    return encounteredPokemons;
 }
 
 function getLeadStats(leads, pokemon) {
-    //TO DO: optimize this search algo. Linear search will do for now
     if(leads.length === 0) {
         leads.push({lead:pokemon, encountered:1})
         return leads;
     }
 
+    //TO DO: optimize this search algo. Linear search will do for now
     for (var i = 0; i < leads.length; i++) { 
         if(leads[i].lead === pokemon) {
             leads[i].encountered++;
