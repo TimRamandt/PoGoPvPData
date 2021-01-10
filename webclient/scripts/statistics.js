@@ -78,13 +78,13 @@ function createStatistics(data, startIndex, daily, league) {
 
 function getEncounteredPokemons(pokemon, encounteredPokemons, isLead) {
     if (encounteredPokemons.length === 0) {
-        encounteredPokemons.push({pokemon: pokemon, encountered: 1, lead: 1})
+        encounteredPokemons.push({name: pokemon, encountered: 1, lead: 1})
         return encounteredPokemons;
     }
 
     //TO DO: optimize this search algo. Linear search will do for now
     for (var i = 0; i < encounteredPokemons.length; i++) { 
-        if(encounteredPokemons[i].pokemon === pokemon) {
+        if(encounteredPokemons[i].name === pokemon) {
             encounteredPokemons[i].encountered++;
             if (isLead) {
                 encounteredPokemons[i].lead++;
@@ -101,7 +101,7 @@ function getEncounteredPokemons(pokemon, encounteredPokemons, isLead) {
         leadStat++;
     }
 
-    encounteredPokemons.push({pokemon: pokemon, encountered: 1, lead: leadStat})
+    encounteredPokemons.push({name: pokemon, encountered: 1, lead: leadStat})
     return encounteredPokemons;
 }
 

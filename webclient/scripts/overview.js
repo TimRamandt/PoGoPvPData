@@ -26,13 +26,36 @@ function populateTeams (teams) {
     }
 }
 
-function populateLeads(leads) {
-    var ulLead = document.getElementById("leads");
-    clearList(ulLead)
-    for(var i = 0; i < leads.length; i++) {
-        var text = leads[i].lead + " (" + leads[i].encountered + ")" 
-        ulLead.append(createNode(text, "li"))
+function populatePokemons(statistics) {
+    var pokemons = statistics.encounteredPokemons
+    var totalBattles = statistics.outcomes.wins + statistics.outcomes.draws + statistics.outcomes.loses
+
+    var table = document.getElementById("encountered-pokemons");
+
+    for (var pokemonIndex = 0; pokemonIndex < pokemons.length; pokemonIndex++) {
+        var row = document.createElement("tr");
+        var tableDataPokemon = document.createElement("td");
+        var pokemonName = document.createTextNode(pokemons[pokemonIndex].name);
+        tableDataPokemon.append(pokemonName)
+
+        row.append(tableDataPokemon);
+
+        var tableDataTotalEnc = document.createElement("td");
+        var encStat = pokemons[pokemonIndex].encountered
+        var totalEncounters = document.createTextNode(encStat + " | " + (encStat/(totalBattles*3)*100).toFixed(2) + " %");
+        tableDataTotalEnc.append(totalEncounters)
+
+        row.append(tableDataTotalEnc);
+
+        var tableDataLead = document.createElement("td");
+        var leadStat = pokemons[pokemonIndex].lead
+        var wasLead = document.createTextNode(leadStat + " (" + ((leadStat/totalBattles)*100).toFixed(2) + " %)");
+        tableDataLead.append(wasLead)
+
+        row.append(tableDataLead);
+        table.append(row);
     }
+
 }
 
 function createNode(text, element) {
@@ -75,7 +98,7 @@ function loadLeagueOptionsUI() {
                 var statistics = createStatistics(dataObject.data, selectedLeague.startIndex, false, selectedLeague.league)
                 console.log(statistics)
                 populateTeams(statistics.teams)
-                populateLeads(statistics.leads)
+                populatePokemons(statistics)
                 drawWinRatio(statistics.outcomes)
                 sourceElement.setAttribute('class', 'highlight')
             }
