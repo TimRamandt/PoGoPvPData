@@ -7,7 +7,7 @@ function drawWinRatio(outcomes, width) {
     var totalAmount = outcomes.wins + outcomes.loses + outcomes.draws;
     var percentages = {w: outcomes.wins/totalAmount, l: outcomes.loses/totalAmount, d: outcomes.draws/totalAmount}
 
-    var canvas = document.getElementById("ratioBar");
+    var canvas = document.getElementById("ratio-bar");
     canvas.width  = width;
     canvas.height = 90;
 

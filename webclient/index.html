@@ -11,29 +11,44 @@
             <h1>PoGo PvP data</h1>
             <div>
                 <div id="leagues">
-                    <h6>select your league</h6>
+                    <h3>select your league</h3>
                 </div>
                 <div>
-                    <canvas id="ratioBar" class="hiden"></canvas>
+                    <canvas id="ratio-bar" class="hiden"></canvas>
                 </div>
-                <h5>Opponent's Teams</h5>
-                <ul id="teams">
-                    <li>no league selected</li>
-                </ul>
-                <div>
+                <div id="encountered-pokemons" class="hiden">
                     <h5>Opponent's Pokemons</h5>
-                    <table class="table encounterPokemonsTable">
+                    <table class="table pokemon-statistic-table">
                         <thead class="thead-dark">
                             <tr>
                                 <th scope="col">pokemon</th>
                                 <th scope="col">total encounters</th>
-                                <th scope="col">was lead</th>
+                                <th scope="col">as a lead</th>
+                                <th scope="col">as in the back</th>
                             </tr>
                         </thead>
-                        <tbody id="encountered-pokemons">
+                        <tbody id="encountered-pokemons-table">
                         </tbody>
                     </table>
-                    <p>You can filter by clicking on total encounter (default) or was lead field</p>
+                </div>
+                <div id="pokemons-leads" class="hiden">
+                    <h5>Opponent's Lead</h5>
+                    <table class="table pokemon-statistic-table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">pokemon</th>
+                                <th scope="col">total leads</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pokemons-leads-table">
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <h5>Opponent's Teams</h5>
+                    <ul id="teams">
+                        <li>no league selected</li>
+                    </ul>
                 </div>
             </div>
             <a href=".\daily.html">see daily progress</a>

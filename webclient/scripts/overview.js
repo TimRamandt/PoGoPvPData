@@ -30,7 +30,8 @@ function populatePokemons(statistics) {
     var pokemons = statistics.encounteredPokemons
     var totalBattles = statistics.outcomes.wins + statistics.outcomes.draws + statistics.outcomes.loses
 
-    var table = document.getElementById("encountered-pokemons");
+    var table = document.getElementById("encountered-pokemons-table");
+    table.innerHTML = "";
 
     for (var pokemonIndex = 0; pokemonIndex < pokemons.length; pokemonIndex++) {
         var row = document.createElement("tr");
@@ -42,20 +43,52 @@ function populatePokemons(statistics) {
 
         var tableDataTotalEnc = document.createElement("td");
         var encStat = pokemons[pokemonIndex].encountered
-        var totalEncounters = document.createTextNode(encStat + " | " + (encStat/(totalBattles*3)*100).toFixed(2) + " %");
+        var totalEncounters = document.createTextNode(encStat + " (" + (encStat/(totalBattles*3)*100).toFixed(2) + " %)");
         tableDataTotalEnc.append(totalEncounters)
 
         row.append(tableDataTotalEnc);
 
         var tableDataLead = document.createElement("td");
         var leadStat = pokemons[pokemonIndex].lead
-        var wasLead = document.createTextNode(leadStat + " (" + ((leadStat/totalBattles)*100).toFixed(2) + " %)");
+        var wasLead = document.createTextNode(leadStat + " (" + ((leadStat/encStat)*100).toFixed(2) + " %)");
+        tableDataLead.append(wasLead)
+
+        row.append(tableDataLead);
+
+        var tableDataLead = document.createElement("td");
+        var backEndStat = pokemons[pokemonIndex].encountered - pokemons[pokemonIndex].lead
+        var wasLead = document.createTextNode(backEndStat + " (" + ((backEndStat/encStat)*100).toFixed(2) + " %)");
         tableDataLead.append(wasLead)
 
         row.append(tableDataLead);
         table.append(row);
     }
+}
 
+function populateLeads(statistics) {
+    var pokemons = statistics.leads
+    var totalBattles = statistics.outcomes.wins + statistics.outcomes.draws + statistics.outcomes.loses
+
+    var table = document.getElementById("pokemons-leads-table");
+    table.innerHTML = "";
+
+    for (var pokemonIndex = 0; pokemonIndex < pokemons.length; pokemonIndex++) {
+        var row = document.createElement("tr");
+        var tableDataPokemon = document.createElement("td");
+        var pokemonName = document.createTextNode(pokemons[pokemonIndex].lead);
+        tableDataPokemon.append(pokemonName)
+
+        row.append(tableDataPokemon);
+
+        var tableDataTotalEnc = document.createElement("td");
+        var leadStat = pokemons[pokemonIndex].encountered
+        var totalEncounters = document.createTextNode(leadStat + " (" + ((leadStat/totalBattles)*100).toFixed(2) + " %)");
+        tableDataTotalEnc.append(totalEncounters)
+
+        row.append(tableDataTotalEnc);
+
+        table.append(row);
+    }
 }
 
 function createNode(text, element) {
@@ -87,18 +120,17 @@ function loadLeagueOptionsUI() {
             var altAttribute = sourceElement.attributes.alt;
 
             if (sourceElement.attributes.class.value !== "highlight") {
-                var ratioBar = document.getElementById("ratioBar")
-                ratioBar.removeAttribute("class")
+                showUIElements(["ratio-bar", "encountered-pokemons", "pokemons-leads"])
                 var selectedOptions = document.getElementsByClassName("highlight"); 
                 for(var i = 0; i < selectedOptions.length; i++) {
                     selectedOptions[i].setAttribute('class', 'leagueOption')
                 }
                 var selectedLeague = leagueOptions.find(lo => lo.league === altAttribute.value)
-                console.log(dataObject)
                 var statistics = createStatistics(dataObject.data, selectedLeague.startIndex, false, selectedLeague.league)
                 console.log(statistics)
                 populateTeams(statistics.teams)
                 populatePokemons(statistics)
+                populateLeads(statistics)
                 drawWinRatio(statistics.outcomes)
                 sourceElement.setAttribute('class', 'highlight')
             }
@@ -109,4 +141,11 @@ function loadLeagueOptionsUI() {
 
 function clearList(ul) {
     ul.innerHTML = "";
+}
+
+function showUIElements(elementIds) {
+    for(var i = 0; i < elementIds.length; i++) {
+        var element = document.getElementById(elementIds[i])
+        element.removeAttribute("class")
+    } 
 }

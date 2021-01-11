@@ -1,4 +1,4 @@
-export { createStatistics, pokemonsToArray, getLeague, findTeamIndex, parseTeamObject }
+export { createStatistics, pokemonsToArray, getLeague, findTeamIndex, parseTeamObject}
 
 function createStatistics(data, startIndex, daily, league) {
     var leadArray = new Array();
