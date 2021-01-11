@@ -8,7 +8,7 @@ from reindexCmd import executeReIndex
 from battlerecordCmd import registerBattleRecord
 
 TITLE = "Pokemon Go PvP Data Collector" 
-VERSION = "v0.3-alpha"
+VERSION = "v0.4-alpha"
 
 def launch():
     dataPath = getSeasonFilePath()
