@@ -7,8 +7,8 @@ using namespace std;
 
 //global variables
 
-static TCHAR windowClassName[] = "MainWindow"; //I removed a _T here because I don't know what it does
-static TCHAR title[] = "Pokémon Go PvP Data";
+static char windowClassName[] = "MainWindow"; //I removed a _T here because I don't know what it does
+static char title[] = "Pokémon Go PvP Data";
 HINSTANCE hInst;
 
 // Forward declarations of functions included in this code module:
@@ -83,20 +83,16 @@ LRESULT CALLBACK WndEventHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 {
    PAINTSTRUCT ps;
    HDC hdc;
-   TCHAR greeting[] = _T("Hello, World!");
+   char greeting[] = "Console Commands";
 
    switch (message)
    {
    case WM_PAINT:
       hdc = BeginPaint(hWnd, &ps);
 
-      // Here your application is laid out.
-      // For this introduction, we just print out "Hello, Windows desktop!"
-      // in the top left corner.
       TextOut(hdc,
          5, 5,
          greeting, _tcslen(greeting));
-      // End application-specific layout section.
 
       EndPaint(hWnd, &ps);
       break;
