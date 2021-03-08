@@ -1,8 +1,10 @@
 #pragma once
+#include <windows.h>
 class textbox
 {
 public:
-	textbox();
-	void TestMe();
+	HWND textboxHWND;
+	textbox(HWND hWnd);
+	void GetText();
 	~textbox();
 };

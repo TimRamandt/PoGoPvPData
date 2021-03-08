@@ -10,8 +10,9 @@ using namespace std;
 
 static char windowClassName[] = "MainWindow"; //I removed a _T here because I don't know what it does
 static char title[] = "Pokémon Go PvP Data";
-HWND textBox; 
 HINSTANCE hInst;
+
+textbox commandText = NULL;
 
 // Forward declarations of functions included in this code module:
 LRESULT CALLBACK WndEventHandler(HWND, UINT, WPARAM, LPARAM);
@@ -51,7 +52,7 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance,
 	        title,
 	        WS_OVERLAPPEDWINDOW, //WS_OVERLAPPEDWINDOW: the type of window to create
 	        CW_USEDEFAULT, CW_USEDEFAULT, //default position
-	        500, 100, //initial size (width, length)
+	        600, 100, //initial size (width, length)
 	        NULL, //the parent of this window
 	        NULL, //initializ a menu bar (none here) 
 	        hInstance,
@@ -90,42 +91,29 @@ LRESULT CALLBACK WndEventHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
    switch (message)
    {
    case WM_CREATE: {
-		   textBox = CreateWindow(
-			   TEXT("EDIT"), TEXT("joatmienemoat"), 
-			   WS_VISIBLE | WS_CHILD | WS_BORDER,
-			   5, 25, 200, 20,
-			   hWnd, (HMENU) NULL, NULL, NULL);
-
+		   commandText = textbox(hWnd);
 	   }
 		   break;
    case WM_PAINT: {
           hdc = BeginPaint(hWnd, &ps);
 
-		   //Get the text from box 1.
-	      int len = GetWindowTextLength(textBox) + 1;
-		  char* text = new char[len];
-		  GetWindowText(textBox, &text[0], len);
-
           TextOut(hdc,
              5, 5,
              greeting, _tcslen(greeting));
 
-          TextOut(hdc,
-             5, 100,
-             text, _tcslen(text));
-    
           EndPaint(hWnd, &ps);
 	   }
           break;
+	   case WM_KEYDOWN: {
+		   commandText.GetText();
+	   }
+	    break;
        case WM_DESTROY:
           PostQuitMessage(0);
           break;
-	   case WM_KEYDOWN: {
-		   textbox myTextBox;
-		   myTextBox.TestMe();
-		   OutputDebugString("key pressed!");
-	   }
-	    break;
+	   case WM_LBUTTONDOWN:
+		   SetFocus(hWnd);
+		   break;
        default:
           return DefWindowProc(hWnd, message, wParam, lParam);
           break;
